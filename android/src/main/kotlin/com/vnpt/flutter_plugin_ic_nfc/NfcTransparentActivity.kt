@@ -1,0 +1,73 @@
+package com.vnpt.flutter_plugin_ic_nfc
+
+import android.app.Activity
+import android.content.Intent
+import android.os.Bundle
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
+import com.google.gson.Gson
+import com.vnptit.nfc.nfc_tool.NfcCallback
+import com.vnptit.nfc.nfc_tool.NfcError
+import com.vnptit.nfc.nfc_tool.NfcOptionNoGuide
+import com.vnptit.nfc.nfc_tool.NfcResult
+import com.vnptit.nfc.nfc_tool.NfcTool
+import org.json.JSONObject
+
+class NfcTransparentActivity : AppCompatActivity() {
+
+   companion object {
+      const val KEY_EXTRA_INFO_NFC = "extra::NFC"
+      private const val CHANNEL = "flutter.sdk.ic.nfc/integrate"
+      const val NFC_RESULT = "nfc_result"
+      const val EKYC_REQUEST_CODE = 100
+      const val NFC_NO_GUIDE_REQUEST_CODE = 101
+      const val ERROR_NFC_CODE = "69"
+   }
+
+   private var nfcTool: NfcTool? = null
+
+   override fun onCreate(savedInstanceState: Bundle?) {
+      super.onCreate(savedInstanceState)
+
+      WindowCompat.setDecorFitsSystemWindows(window, false)
+      setContentView(View(this))
+
+      val jsonObject = JSONObject(intent.getStringExtra(KEY_EXTRA_INFO_NFC) ?: "{}")
+
+      nfcTool = NfcTool(this)
+      // clear previous session reader chip
+      nfcTool?.clearReadChip()
+      // start new session
+      nfcTool?.startReadChip(
+         NfcOptionNoGuide().setExtras(FlutterPluginIcNfcPlugin.navigateToOnlyNFC(this, jsonObject)),
+         object : NfcCallback() {
+            override fun onSuccess(result: NfcResult?) {
+               val intent = Intent()
+               val gson = Gson()
+
+               intent.putExtra(NFC_RESULT, gson.toJson(result))
+               setResult(RESULT_OK, intent)
+               finish()
+            }
+
+            override fun onError(message: NfcError?) {
+               val intent = Intent()
+               intent.putExtra(NFC_RESULT, message)
+               setResult(RESULT_OK, intent)
+               finish()
+            }
+         }
+      )
+   }
+
+   override fun onNewIntent(intent: Intent?) {
+      super.onNewIntent(intent)
+      nfcTool?.handleIntent(intent)
+   }
+
+   override fun onDestroy() {
+      super.onDestroy()
+      nfcTool?.clearReadChip()
+   }
+}
