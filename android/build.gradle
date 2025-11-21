@@ -64,11 +64,11 @@ android {
         // implementation "com.vnpt.flutter_plugin_ic_nfc:vnpt-nfc-sdk:1.8.0"
         // implementation 'com.vnpt.flutter_plugin_ic_nfc:scanqr-ic-sdk:1.0.6'
 
-         compileOnly files('libs/vnpt_nfc_sdk-v1.8.0.aar')
-         compileOnly files('libs/scanqr_ic_sdk-v1.0.6.aar')
+         compileOnly files('libs/vnpt_nfc_sdk-release-v1.8.0.aar')
+         compileOnly files('libs/scanqr_ic_sdk-release-v1.0.6.aar')
 
-//        implementation files('libs/vnpt_nfc_sdk-v1.8.0.aar')
-//        implementation files('libs/scanqr_ic_sdk-v1.0.6.aar')
+//        implementation files('libs/vnpt_nfc_sdk-release-v1.8.0.aar.aar')
+//        implementation files('libs/scanqr_ic_sdk-release-v1.0.6.aar')
 
         implementation 'androidx.appcompat:appcompat:1.6.1'
         implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
