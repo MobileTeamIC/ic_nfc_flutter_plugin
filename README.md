@@ -13,7 +13,7 @@ Plugin Flutter để tích hợp NFC SDK cho việc đọc thông tin từ thẻ
 dependencies:
   flutter_plugin_ic_nfc:
     git:
-      url: https://your-private-git-repo.com/flutter_plugin_ic_nfc.git
+      url: path/flutter_plugin_ic_nfc
       ref: 
 ```
 
@@ -27,8 +27,22 @@ flutter pub get
 
 ## ⚙️ Cấu hình
 
-### iOS
+### Android
+Thêm cấu hình vào app `android/build.gradle.kts`
+```kts
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        mavenLocal()
+        maven { url = uri("${rootDir}/../../android/libs-maven-local") }
+    }
+}
+```
+Trỏ tới đường dẫn `android/libs-maven-local` của plugin `flutter_plugin_ic_nfc`
 
+### iOS
+Thêm dòng sau vào `Info.plist`
 ```xml
 <key>NFCReaderUsageDescription</key>
 <string>Ứng dụng cần quyền NFC để đọc thông tin từ thẻ căn cước công dân</string>
@@ -67,12 +81,10 @@ import 'package:flutter_plugin_ic_nfc/nfc/nfc.dart';
 
 
 
-### 3. NFC với UI (Nhập thủ công)
+### 3. NFC với UI
 
 
 ### 4. NFC không có UI
 
 ### Sử dụng với NfcConfig (Advanced)
-
-## 📚 API Reference
 
