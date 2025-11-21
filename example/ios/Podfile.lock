@@ -26,9 +26,9 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  flutter_plugin_ic_nfc: ceb841a24c7d80c3af1a0a8817c960350a94e712
-  integration_test: 4a889634ef21a45d28d50d622cf412dc6d9f586e
-  shared_preferences_foundation: 9e1978ff2562383bd5676f64ec4e9aa8fa06a6f7
+  flutter_plugin_ic_nfc: a1bef893c697b2723131e33338b3f54e408a9c59
+  integration_test: 252f60fa39af5e17c3aa9899d35d908a0721b573
+  shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
 
 PODFILE CHECKSUM: 251cb053df7158f337c0712f2ab29f4e0fa474ce
 
