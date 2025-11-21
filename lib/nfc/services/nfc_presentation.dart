@@ -4,10 +4,10 @@ import 'nfc_config.dart';
 /// Predefined configurations for common NFC use cases
 class NfcPresets {
   /// QR -> NFC flow (no manual inputs needed)
-  static NfcConfig qrToNfc({
-    NfcLanguage languageSdk = NfcLanguage.icnfc_vi,
-    bool isShowTutorial = true,
-    bool isEnableGotIt = true,
+  static ICNfcConfig qrToNfc({
+    ICNfcLanguage languageSdk = ICNfcLanguage.icnfc_vi,
+    bool isShowTutorial = false,
+    bool isEnableGotIt = false,
     bool isEnableUploadImage = true,
     bool isEnablePostcodeMatching = false,
     String inputClientSession = '',
@@ -21,7 +21,7 @@ class NfcPresets {
     String tokenKeyEKYC = '',
     String baseUrl = '',
 
-  }) => NfcConfig(
+  }) => ICNfcConfig(
 
     accessToken: accessToken,
     tokenId: tokenId,
@@ -43,7 +43,7 @@ class NfcPresets {
   );
 
   /// MRZ -> NFC flow (no manual inputs needed)
-  static NfcConfig mrzToNfc({
+  static ICNfcConfig mrzToNfc({
     String accessToken = '',
     String tokenId = '',
     String tokenKey = '',
@@ -51,15 +51,15 @@ class NfcPresets {
     String tokenIdEKYC = '',
     String tokenKeyEKYC = '',
     String baseUrl = '',
-    NfcLanguage languageSdk = NfcLanguage.icnfc_vi,
-    bool isShowTutorial = true,
-    bool isEnableGotIt = true,
+    ICNfcLanguage languageSdk = ICNfcLanguage.icnfc_vi,
+    bool isShowTutorial = false,
+    bool isEnableGotIt = false,
     bool isEnableUploadImage = true,
     bool isEnablePostcodeMatching = false,
     String inputClientSession = '',
     List<String> readingTagsNFC = const [],
     String nameVideoHelpNFC = '',
-  }) => NfcConfig(
+  }) => ICNfcConfig(
     accessToken: accessToken,
     tokenId: tokenId,
     tokenKey: tokenKey,
@@ -79,7 +79,7 @@ class NfcPresets {
   );
 
   /// Manual NFC with SDK UI
-  static NfcConfig manualWithUi({
+  static ICNfcConfig manualWithUi({
     String accessToken = '',
     String tokenId = '',
     String tokenKey = '',
@@ -90,15 +90,15 @@ class NfcPresets {
     required String idNumber,
     required String birthday,
     required String expiredDate,
-    NfcLanguage languageSdk = NfcLanguage.icnfc_vi,
-    bool isShowTutorial = true,
-    bool isEnableGotIt = true,
+    ICNfcLanguage languageSdk = ICNfcLanguage.icnfc_vi,
+    bool isShowTutorial = false,
+    bool isEnableGotIt = false,
     bool isEnableUploadImage = true,
     bool isEnablePostcodeMatching = false,
     String inputClientSession = '',
     List<String> readingTagsNFC = const [],
     String nameVideoHelpNFC = '',
-  }) => NfcConfig(
+  }) => ICNfcConfig(
     accessToken: accessToken,
     tokenId: tokenId,
     tokenKey: tokenKey,
@@ -121,7 +121,7 @@ class NfcPresets {
   );
 
   /// Manual NFC without SDK UI
-  static NfcConfig manualWithoutUi({
+  static ICNfcConfig manualWithoutUi({
     required String idNumber,
     required String birthday,
     required String expiredDate,
@@ -132,13 +132,13 @@ class NfcPresets {
     String tokenIdEKYC = '',
     String tokenKeyEKYC = '',
     String baseUrl = '',
-    NfcLanguage languageSdk = NfcLanguage.icnfc_vi,
-    bool isEnableUploadImage = true,
+    ICNfcLanguage languageSdk = ICNfcLanguage.icnfc_vi,
+    bool isEnableUploadImage = false,
     bool isEnablePostcodeMatching = false,
     String inputClientSession = '',
     List<String> readingTagsNFC = const [],
     String nameVideoHelpNFC = '',
-  }) => NfcConfig(
+  }) => ICNfcConfig(
     accessToken: accessToken,
     tokenId: tokenId,
     tokenKey: tokenKey,

@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'enum_nfc.dart';
 
 /// Configuration class for NFC SDK parameters
-class NfcConfig {
+class ICNfcConfig {
   final String? accessToken;
   final String? tokenId;
   final String? tokenKey;
@@ -15,7 +15,7 @@ class NfcConfig {
   final String? baseUrl;
 
   // Optional SDK presentation options (currently hardcoded in iOS, reserved for future)
-  final NfcLanguage? languageSdk;
+  final ICNfcLanguage? languageSdk;
   final bool? isShowTutorial;
   final bool? isEnableGotIt;
   final bool? isDisableTutorial;
@@ -63,7 +63,7 @@ class NfcConfig {
   final String? transactionPartnerIDOriginalLocation;
   final String? nameSSLPinning;
 
-  const NfcConfig({
+  const ICNfcConfig({
     this.accessToken,
     this.tokenId,
     this.tokenKey,
@@ -281,7 +281,7 @@ class NfcConfig {
         expiredDate!.trim().length == 6;
   }
 
-  NfcConfig copyWith({
+  ICNfcConfig copyWith({
     String? accessToken,
     String? tokenId,
     String? tokenKey,
@@ -289,7 +289,7 @@ class NfcConfig {
     String? tokenIdEKYC,
     String? tokenKeyEKYC,
     String? baseUrl,
-    NfcLanguage? languageSdk,
+    ICNfcLanguage? languageSdk,
     bool? isShowTutorial,
     bool? isEnableGotIt,
     bool? isDisableTutorial,
@@ -331,7 +331,7 @@ class NfcConfig {
     String? transactionPartnerIDOriginalLocation,
     String? nameSSLPinning,
   }) {
-    return NfcConfig(
+    return ICNfcConfig(
       accessToken: accessToken ?? this.accessToken,
       tokenId: tokenId ?? this.tokenId,
       tokenKey: tokenKey ?? this.tokenKey,

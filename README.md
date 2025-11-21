@@ -1,4 +1,5 @@
 # Flutter Plugin NFC
+GitHub: https://github.com/MobileTeamIC/ic_nfc_flutter_plugin.git 
 
 Plugin Flutter để tích hợp NFC SDK cho việc đọc thông tin từ thẻ căn cước công dân (CCCD) và hộ chiếu (Passport) trên Android và iOS.
 

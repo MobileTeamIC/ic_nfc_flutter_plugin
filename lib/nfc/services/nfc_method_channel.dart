@@ -13,28 +13,28 @@ class NfcMethodChannel {
   const NfcMethodChannel();
 
   /// QR Code → NFC flow (`navigateToNfcQrCode`)
-  Future<Map<String, dynamic>> startQrToNfc(NfcConfig config) async {
+  Future<Map<String, dynamic>> startQrToNfc(ICNfcConfig config) async {
     return _invokeMethod('NFC_QR_CODE', config);
   }
 
   /// MRZ → NFC flow (`actionStart_MRZ_NFC`)
-  Future<Map<String, dynamic>> startMrzToNfc(NfcConfig config) async {
+  Future<Map<String, dynamic>> startMrzToNfc(ICNfcConfig config) async {
     return _invokeMethod('NFC_MRZ_CODE', config);
   }
 
   /// Manual NFC with SDK UI (`actionStart_Only_NFC`)
-  Future<Map<String, dynamic>> startOnlyNfc(NfcConfig config) async {
+  Future<Map<String, dynamic>> startOnlyNfc(ICNfcConfig config) async {
     return _invokeMethod('NFC_ONLY_UI', config);
   }
 
   /// Manual NFC without SDK UI (`actionStart_Only_NFC_WithoutUI`)
-  Future<Map<String, dynamic>> startOnlyNfcWithoutUi(NfcConfig config) async {
+  Future<Map<String, dynamic>> startOnlyNfcWithoutUi(ICNfcConfig config) async {
     return _invokeMethod('NFC_ONLY_WITHOUT_UI', config);
   }
 
   Future<Map<String, dynamic>> _invokeMethod(
     String methodName,
-    NfcConfig config,
+    ICNfcConfig config,
   ) async {
     try {
       final dynamic result = await _channel.invokeMethod(

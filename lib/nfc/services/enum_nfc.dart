@@ -1,14 +1,14 @@
 /// Flutter-side enums mirroring NFC SDK options.
 enum NfcFlowType { qrToNfc, mrzToNfc, onlyNfcWithUi, onlyNfcWithoutUi }
 
-enum NfcLanguage { icnfc_vi, icnfc_en }
+enum ICNfcLanguage { icnfc_vi, icnfc_en }
 
-extension NfcLanguageValue on NfcLanguage {
+extension ICNfcLanguageValue on ICNfcLanguage {
   String get channelValue {
     switch (this) {
-      case NfcLanguage.icnfc_vi:
+      case ICNfcLanguage.icnfc_vi:
         return 'icnfc_vi';
-      case NfcLanguage.icnfc_en:
+      case ICNfcLanguage.icnfc_en:
         return 'icnfc_en';
     }
   }

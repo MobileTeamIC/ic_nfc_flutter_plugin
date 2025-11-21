@@ -1,4 +1,4 @@
-class NfcKeyResultConstants {
+class ICNfcKeyResult {
   static const String dataGroupsResult = "DATA_GROUPS_RESULT";
   static const String dataNFCResult = "DATA_NFC_RESULT";
   static const String clientSessionResult = "CLIENT_SESSION_RESULT";

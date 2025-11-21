@@ -20,12 +20,12 @@ class _NfcScreenState extends State<NfcScreen> {
   /// ----------------------------
   /// CONFIG
   /// ----------------------------
-  NfcLanguage get _language => SharedPreferenceService.instance.getBool(
+  ICNfcLanguage get _language => SharedPreferenceService.instance.getBool(
         SharedPreferenceKeys.isViLanguageMode,
         defaultValue: true,
       )
-          ? NfcLanguage.icnfc_vi
-          : NfcLanguage.icnfc_en;
+          ? ICNfcLanguage.icnfc_vi
+          : ICNfcLanguage.icnfc_en;
 
   
 

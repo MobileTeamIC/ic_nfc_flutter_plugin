@@ -61,28 +61,28 @@ class _LogScreenState extends State<LogScreen> {
                     context,
                     icon: Icons.image,
                     title: 'Data NFC',
-                    content: widget.json[NfcKeyResultConstants.dataNFCResult].toString(),
+                    content: widget.json[ICNfcKeyResult.dataNFCResult].toString(),
                   ),
                   const SizedBox(height: 12),
                   _buildLogItem(
                     context,
                     icon: Icons.credit_card,
                     title: 'Client session',
-                    content: widget.json[NfcKeyResultConstants.clientSessionResult],
+                    content: widget.json[ICNfcKeyResult.clientSessionResult],
                   ),
                   const SizedBox(height: 12),
                   _buildLogItem(
                     context,
                     icon: Icons.credit_card,
                     title: 'Avatar NFC',
-                    content: widget.json[NfcKeyResultConstants.pathImageAvatar],
+                    content: widget.json[ICNfcKeyResult.pathImageAvatar],
                   ),
                   const SizedBox(height: 12),
                   _buildLogItem(
                     context,
                     icon: Icons.compare_arrows,
                     title: 'Hash avatar',
-                    content: widget.json[NfcKeyResultConstants.hashImageAvatar],
+                    content: widget.json[ICNfcKeyResult.hashImageAvatar],
                   ),
                   const SizedBox(height: 12),
                   _buildLogItem(
@@ -90,7 +90,7 @@ class _LogScreenState extends State<LogScreen> {
                     icon: Icons.face,
                     title: 'Postcode original location',
                     content:
-                        widget.json[NfcKeyResultConstants.postcodeOriginalLocationResult]
+                        widget.json[ICNfcKeyResult.postcodeOriginalLocationResult]
                             .toString(),
                   ),
                   const SizedBox(height: 12),
@@ -99,7 +99,7 @@ class _LogScreenState extends State<LogScreen> {
                     icon: Icons.face_retouching_natural,
                     title: 'Postcode recent location',
                     content:
-                        widget.json[NfcKeyResultConstants.postcodeRecentLocationResult]
+                        widget.json[ICNfcKeyResult.postcodeRecentLocationResult]
                             .toString(),
                   ),
                   const SizedBox(height: 12),
@@ -107,7 +107,7 @@ class _LogScreenState extends State<LogScreen> {
                     context,
                     icon: Icons.qr_code,
                     title: 'Log NFC',
-                    content: widget.json[NfcKeyResultConstants.dataNFCResultJSON],
+                    content: widget.json[ICNfcKeyResult.dataNFCResultJSON],
                   ),
                   const SizedBox(height: 12),
 
@@ -115,42 +115,42 @@ class _LogScreenState extends State<LogScreen> {
                     context,
                     icon: Icons.document_scanner,
                     title: 'Data groups',
-                    content: widget.json[NfcKeyResultConstants.dataGroupsResult].toString(),
+                    content: widget.json[ICNfcKeyResult.dataGroupsResult].toString(),
                   ),
                   const SizedBox(height: 12),
                   _buildLogItem(
                     context,
                     icon: Icons.document_scanner,
                     title: 'Hash avatar for log',
-                    content: widget.json[NfcKeyResultConstants.hashAvatarForLog],
+                    content: widget.json[ICNfcKeyResult.hashAvatarForLog],
                   ),
                   const SizedBox(height: 12),
                   _buildLogItem(
                     context,
                     icon: Icons.document_scanner,
                     title: 'Hash DGs for log',
-                    content: widget.json[NfcKeyResultConstants.hashDGsForLog],
+                    content: widget.json[ICNfcKeyResult.hashDGsForLog],
                   ),
                   const SizedBox(height: 12),
                   _buildLogItem(
                     context,
                     icon: Icons.document_scanner,
                     title: 'NFC for log',
-                    content: widget.json[NfcKeyResultConstants.nfcForLog],
+                    content: widget.json[ICNfcKeyResult.nfcForLog],
                   ),
                   const SizedBox(height: 12),
                   _buildLogItem(
                     context,
                     icon: Icons.document_scanner,
                     title: 'Matching origin for log',
-                    content: widget.json[NfcKeyResultConstants.matchingOriginForLog],
+                    content: widget.json[ICNfcKeyResult.matchingOriginForLog],
                   ),
                   const SizedBox(height: 12),
                   _buildLogItem(
                     context,
                     icon: Icons.document_scanner,
                     title: 'Matching residence for log',
-                    content: widget.json[NfcKeyResultConstants.matchingResidenceForLog],
+                    content: widget.json[ICNfcKeyResult.matchingResidenceForLog],
                   ),
                   const SizedBox(height: 16),
                 ],
@@ -303,18 +303,18 @@ class _LogScreenState extends State<LogScreen> {
     buffer.writeln('json: ${widget.json}');
     buffer.writeln('--------------------------------');
     final keys = [
-      NfcKeyResultConstants.dataGroupsResult,
-      NfcKeyResultConstants.dataNFCResult,
-      NfcKeyResultConstants.clientSessionResult,
-      NfcKeyResultConstants.pathImageAvatar,
-      NfcKeyResultConstants.hashImageAvatar,
-      NfcKeyResultConstants.postcodeOriginalLocationResult,
-      NfcKeyResultConstants.postcodeRecentLocationResult,
-      NfcKeyResultConstants.hashAvatarForLog,
-      NfcKeyResultConstants.hashDGsForLog,
-      NfcKeyResultConstants.nfcForLog,
-      NfcKeyResultConstants.matchingOriginForLog,
-      NfcKeyResultConstants.matchingResidenceForLog,
+      ICNfcKeyResult.dataGroupsResult,
+      ICNfcKeyResult.dataNFCResult,
+      ICNfcKeyResult.clientSessionResult,
+      ICNfcKeyResult.pathImageAvatar,
+      ICNfcKeyResult.hashImageAvatar,
+      ICNfcKeyResult.postcodeOriginalLocationResult,
+      ICNfcKeyResult.postcodeRecentLocationResult,
+      ICNfcKeyResult.hashAvatarForLog,
+      ICNfcKeyResult.hashDGsForLog,
+      ICNfcKeyResult.nfcForLog,
+      ICNfcKeyResult.matchingOriginForLog,
+      ICNfcKeyResult.matchingResidenceForLog,
     ];
 
     for (final key in keys) {

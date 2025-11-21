@@ -21,7 +21,7 @@ class _SettingScreenState extends State<SettingScreen> {
   final TextEditingController _accessTokenEKYCController = TextEditingController();
   bool _isLoading = false;
 
-  NfcLanguage _languageMode = NfcLanguage.icnfc_vi;
+  ICNfcLanguage _languageMode = ICNfcLanguage.icnfc_vi;
 
   @override
   void initState() {
@@ -54,7 +54,7 @@ class _SettingScreenState extends State<SettingScreen> {
     _languageMode = SharedPreferenceService.instance.getBool(
       SharedPreferenceKeys.isViLanguageMode,
       defaultValue: true,
-    ) ? NfcLanguage.icnfc_vi : NfcLanguage.icnfc_en;
+    ) ? ICNfcLanguage.icnfc_vi : ICNfcLanguage.icnfc_en;
   }
 
   @override
@@ -109,7 +109,7 @@ class _SettingScreenState extends State<SettingScreen> {
         ),
         SharedPreferenceService.instance.setBool(
           SharedPreferenceKeys.isViLanguageMode,
-          _languageMode == NfcLanguage.icnfc_vi,
+          _languageMode == ICNfcLanguage.icnfc_vi,
         ),
       ]);
 
@@ -178,18 +178,18 @@ class _SettingScreenState extends State<SettingScreen> {
                     value: _languageMode.channelValue,
                     items: [
                       DropdownMenuItem(
-                        value: NfcLanguage.icnfc_vi.channelValue,
+                        value: ICNfcLanguage.icnfc_vi.channelValue,
                         child: Text('Tiếng Việt'),
                       ),
                       DropdownMenuItem(
-                        value: NfcLanguage.icnfc_en.channelValue,
+                        value: ICNfcLanguage.icnfc_en.channelValue,
                         child: Text('Tiếng Anh'),
                       ),
                     ],
                     onChanged: (value) {
                       setState(
                         () =>
-                            _languageMode = NfcLanguage.values.firstWhere(
+                            _languageMode = ICNfcLanguage.values.firstWhere(
                               (e) => e.channelValue == value,
                             ),
                       );

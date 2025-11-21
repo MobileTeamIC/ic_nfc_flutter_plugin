@@ -3,13 +3,6 @@ import 'services/nfc_config.dart';
 import 'services/nfc_method_channel.dart';
 import 'services/nfc_presentation.dart';
 
-/// Public result type for NFC operations.
-typedef NfcResult = Map<String, dynamic>;
-
-/// High-level NFC SDK bridge for NFC flows.
-///
-/// - Cung cấp API cấp cao, dễ dùng với named parameters.
-/// - Vẫn cho phép dùng trực tiếp [NfcConfig] cho các case nâng cao.
 class ICNfc {
   const ICNfc();
 
@@ -19,27 +12,27 @@ class ICNfc {
   static const NfcMethodChannel _methodChannel = NfcMethodChannel();
 
 
-  Future<NfcResult> qrToNfc(NfcConfig config) {
+  Future<Map<String, dynamic>> qrToNfc(ICNfcConfig config) {
     return _methodChannel.startQrToNfc(config);
   }
 
 
-  Future<NfcResult> mrzToNfc(NfcConfig config) {
+  Future<Map<String, dynamic>> mrzToNfc(ICNfcConfig config) {
     return _methodChannel.startMrzToNfc(config);
   }
 
 
-  Future<NfcResult> onlyNfcWithUi(NfcConfig config) {
+  Future<Map<String, dynamic>> onlyNfcWithUi(ICNfcConfig config) {
     return _methodChannel.startOnlyNfc(config);
   }
 
 
-  Future<NfcResult> onlyNfcWithoutUi(NfcConfig config) {
+  Future<Map<String, dynamic>> onlyNfcWithoutUi(ICNfcConfig config) {
     return _methodChannel.startOnlyNfcWithoutUi(config);
   }
 
   /// QR → NFC 
-  Future<NfcResult> qrToNfcSimple({
+  Future<Map<String, dynamic>> qrToNfcSimple({
     String accessToken = '',
     String tokenId = '',
     String tokenKey = '',
@@ -47,9 +40,9 @@ class ICNfc {
     String tokenIdEKYC = '',
     String tokenKeyEKYC = '',
     String baseUrl = '',
-    NfcLanguage languageSdk = NfcLanguage.icnfc_vi,
-    bool isShowTutorial = true,
-    bool isEnableGotIt = true,
+    ICNfcLanguage languageSdk = ICNfcLanguage.icnfc_vi,
+    bool isShowTutorial = false,
+    bool isEnableGotIt = false,
     bool isEnableUploadImage = true,
     bool isEnablePostcodeMatching = false,
     String inputClientSession = '',
@@ -79,7 +72,7 @@ class ICNfc {
   /// MRZ → NFC 
   ///
   /// Nội bộ dùng [NfcPresets.mrzToNfc] để tạo [NfcConfig].
-  Future<NfcResult> mrzToNfcSimple({
+  Future<Map<String, dynamic>> mrzToNfcSimple({
     String accessToken = '',
     String tokenId = '',
     String tokenKey = '',
@@ -87,9 +80,9 @@ class ICNfc {
     String tokenIdEKYC = '',
     String tokenKeyEKYC = '',
     String baseUrl = '',
-    NfcLanguage languageSdk = NfcLanguage.icnfc_vi,
-    bool isShowTutorial = true,
-    bool isEnableGotIt = true,
+    ICNfcLanguage languageSdk = ICNfcLanguage.icnfc_vi,
+    bool isShowTutorial = false,
+    bool isEnableGotIt = false,
     bool isEnableUploadImage = true,
     bool isEnablePostcodeMatching = false,
     String inputClientSession = '',
@@ -119,7 +112,7 @@ class ICNfc {
   /// Manual NFC with SDK UI với named parameters đơn giản.
   ///
   /// Nội bộ dùng [NfcPresets.manualWithUi] để tạo [NfcConfig].
-  Future<NfcResult> onlyNfcWithUiSimple({
+  Future<Map<String, dynamic>> onlyNfcWithUiSimple({
     required String idNumber,
     required String birthday,
     required String expiredDate,
@@ -130,7 +123,7 @@ class ICNfc {
     String tokenIdEKYC = '',
     String tokenKeyEKYC = '',
     String baseUrl = '',
-    NfcLanguage languageSdk = NfcLanguage.icnfc_vi,
+    ICNfcLanguage languageSdk = ICNfcLanguage.icnfc_vi,
     bool isShowTutorial = true,
     bool isEnableGotIt = true,
     bool isEnableUploadImage = true,
@@ -165,7 +158,7 @@ class ICNfc {
   /// Thực hiện quét NFC không có UI
   ///
   /// Nội bộ dùng [NfcPresets.manualWithoutUi] để tạo [NfcConfig].
-  Future<NfcResult> onlyNfcWithoutUiSimple({
+  Future<Map<String, dynamic>> onlyNfcWithoutUiSimple({
     required String idNumber,
     required String birthday,
     required String expiredDate,
@@ -176,7 +169,7 @@ class ICNfc {
     String tokenIdEKYC = '',
     String tokenKeyEKYC = '',
     String baseUrl = '',
-    NfcLanguage languageSdk = NfcLanguage.icnfc_vi,
+    ICNfcLanguage languageSdk = ICNfcLanguage.icnfc_vi,
     bool isEnableUploadImage = true,
     bool isEnablePostcodeMatching = false,
     String inputClientSession = '',
