@@ -270,12 +270,6 @@ public class FlutterPluginIcNfcPlugin: NSObject, FlutterPlugin {
   }
 
   private func configureUIOptions(for reader: ICMainNFCReaderViewController, args: [String: Any]) {
-    reader.contentColorHeaderBar = UIColorFromRGB(rgbValue: 0x142730, alpha: 1.0)
-    reader.textColorContentMain = UIColorFromRGB(rgbValue: 0x142730, alpha: 1.0)
-    reader.modeButtonHeaderBar = RightButton
-    reader.backgroundColorButton = UIColorFromRGB(rgbValue: 0x184693, alpha: 1.0)
-    reader.textColorTitleButton = UIColorFromRGB(rgbValue: 0xFFFFFF, alpha: 1.0)
-    reader.backgroundColorMainScreen = UIColorFromRGB(rgbValue: 0xFFFFFF, alpha: 1.0)
     reader.isShowTutorial = args[KeyArgumentMethodChannel.isShowTutorial] as? Bool ?? false
 //    reader.isShowLogo = args[KeyArgumentMethodChannel.isShowLogo] as? Bool ?? false
     reader.transactionPartnerIDUploadNFC = args[KeyArgumentMethodChannel.transactionPartnerIDUploadNFC] as? String ?? ""

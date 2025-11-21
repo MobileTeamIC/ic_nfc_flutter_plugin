@@ -3,7 +3,6 @@ allprojects {
         google()
         mavenCentral()
         mavenLocal()
-        maven { url = uri("${rootDir}/../../android/libs-maven-local") }
     }
 }
 

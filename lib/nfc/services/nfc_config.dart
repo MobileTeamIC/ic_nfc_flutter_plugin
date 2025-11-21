@@ -119,159 +119,157 @@ class ICNfcConfig {
     final map = <String, dynamic>{};
 
     if (accessToken != null) {
-      map['accessToken'] = accessToken;
+      map['access_token'] = accessToken;
     }
     if (tokenId != null) {
-      map['tokenId'] = tokenId;
+      map['token_id'] = tokenId;
     }
     if (tokenKey != null) {
-      map['tokenKey'] = tokenKey;
+      map['token_key'] = tokenKey;
     }
 
     if (accessTokenEKYC != null) {
-      map['accessTokenEKYC'] = accessTokenEKYC;
+      map['access_token_ekyc'] = accessTokenEKYC;
     }
     if (tokenIdEKYC != null) {
-      map['tokenIdEKYC'] = tokenIdEKYC;
+      map['token_id_ekyc'] = tokenIdEKYC;
     }
     if (tokenKeyEKYC != null) {
-      map['tokenKeyEKYC'] = tokenKeyEKYC;
+      map['token_key_ekyc'] = tokenKeyEKYC;
     }
 
     if (baseUrl != null) {
-      map['baseUrl'] = baseUrl;
+      map['base_url'] = baseUrl;
     }
 
     if (idNumber != null) {
-      map['idNumber'] = idNumber;
+      map['id_number'] = idNumber;
     }
     if (birthday != null) {
       map['birthday'] = birthday;
     }
     if (expiredDate != null) {
-      map['expiredDate'] = expiredDate;
+      map['expired_date'] = expiredDate;
     }
 
-    // Reserved for future enhancements on iOS side
     if (languageSdk != null) {
-      map['languageSdk'] = languageSdk!.channelValue;
+      map['language_sdk'] = languageSdk!.channelValue;
     }
     if (isShowTutorial != null) {
-      map['isShowTutorial'] = isShowTutorial;
+      map['is_show_tutorial'] = isShowTutorial;
     }
     if (isEnableGotIt != null) {
-      map['isEnableGotIt'] = isEnableGotIt;
+      map['is_enable_got_it'] = isEnableGotIt;
     }
     if (isDisableTutorial != null) {
-      map['isDisableTutorial'] = isDisableTutorial;
+      map['is_disable_tutorial'] = isDisableTutorial;
     }
 
     if (readerCardMode != null) {
-      map['readerCardMode'] = readerCardMode!.channelValue;
+      map['reader_card_mode'] = readerCardMode!.channelValue;
     }
     if (isEnableUploadImage != null) {
-      map['isEnableUploadImage'] = isEnableUploadImage;
+      map['is_enable_upload_image'] = isEnableUploadImage;
     }
     if (isEnablePostcodeMatching != null) {
-      map['isEnablePostcodeMatching'] = isEnablePostcodeMatching;
+      map['is_enable_postcode_matching'] = isEnablePostcodeMatching;
     }
     if (inputClientSession != null) {
-      map['inputClientSession'] = inputClientSession;
+      map['input_client_session'] = inputClientSession;
     }
     if (challengeCode != null) {
-      map['challengeCode'] = challengeCode;
+      map['challenge_code'] = challengeCode;
     }
     if (readingTagsNFC != null) {
-      map['readingTagsNFC'] = readingTagsNFC;
+      map['reading_tags_nfc'] = readingTagsNFC;
     }
     if (isEnableCheckChipClone != null) {
-      map['isEnableCheckChipClone'] = isEnableCheckChipClone;
+      map['is_enable_check_chip_clone'] = isEnableCheckChipClone;
     }
     if (isEnableWaterMark != null) {
-      map['isEnableWaterMark'] = isEnableWaterMark;
+      map['is_enable_water_mark'] = isEnableWaterMark;
     }
     if (isEnableAddIdCheckData != null) {
-      map['isEnableAddIdCheckData'] = isEnableAddIdCheckData;
+      map['is_enable_add_id_check_data'] = isEnableAddIdCheckData;
     }
     if (isEnableUploadDG != null) {
-      map['isEnableUploadDG'] = isEnableUploadDG;
+      map['is_enable_upload_dg'] = isEnableUploadDG;
     }
     if (textReadyNFC != null) {
-      map['textReadyNFC'] = textReadyNFC;
+      map['text_ready_nfc'] = textReadyNFC;
     }
     if (textScanningNFC != null) {
-      map['textScanningNFC'] = textScanningNFC;
+      map['text_scanning_nfc'] = textScanningNFC;
     }
     if (textFinishNFC != null) {
-      map['textFinishNFC'] = textFinishNFC;
+      map['text_finish_nfc'] = textFinishNFC;
     }
     if (textDetectedNFC != null) {
-      map['textDetectedNFC'] = textDetectedNFC;
+      map['text_detected_nfc'] = textDetectedNFC;
     }
     if (nameVideoHelpNFC != null) {
-      map['nameVideoHelpNFC'] = nameVideoHelpNFC;
+      map['name_video_help_nfc'] = nameVideoHelpNFC;
     }
     if (publicKey != null) {
-      map['publicKey'] = publicKey;
+      map['public_key'] = publicKey;
     }
     if (isEnableEncrypt != null) {
-      map['isEnableEncrypt'] = isEnableEncrypt;
+      map['is_enable_encrypt'] = isEnableEncrypt;
     }
     if (modeUploadFile != null) {
-      map['modeUploadFile'] = modeUploadFile!.channelValue;
+      map['mode_upload_file'] = modeUploadFile!.channelValue;
     }
     if (flowNFC != null) {
-      map['flowNFC'] = flowNFC!.channelValue;
+      map['flow_nfc'] = flowNFC!.channelValue;
     }
     if (numberTimesRetryScanNFC != null) {
-      map['numberTimesRetryScanNFC'] = numberTimesRetryScanNFC;
+      map['number_times_retry_scan_nfc'] = numberTimesRetryScanNFC;
     }
     if (isEnableCheckSimulator != null) {
-      map['isEnableCheckSimulator'] = isEnableCheckSimulator;
+      map['is_enable_check_simulator'] = isEnableCheckSimulator;
     }
     if (isEnableCheckJailbroken != null) {
-      map['isEnableCheckJailbroken'] = isEnableCheckJailbroken;
+      map['is_enable_check_jailbroken'] = isEnableCheckJailbroken;
     }
     if (isAnimatedDismissed != null) {
-      map['isAnimatedDismissed'] = isAnimatedDismissed;
+      map['is_animated_dismissed'] = isAnimatedDismissed;
     }
     if (urlUploadImage != null) {
-      map['urlUploadImage'] = urlUploadImage;
+      map['url_upload_image'] = urlUploadImage;
     }
     if (urlUploadDataNFC != null) {
-      map['urlUploadDataNFC'] = urlUploadDataNFC;
+      map['url_upload_data_nfc'] = urlUploadDataNFC;
     }
     if (urlUploadLogSDK != null) {
-      map['urlUploadLogSDK'] = urlUploadLogSDK;
+      map['url_upload_log_sdk'] = urlUploadLogSDK;
     }
     if (urlPostcodeMatching != null) {
-      map['urlPostcodeMatching'] = urlPostcodeMatching;
+      map['url_postcode_matching'] = urlPostcodeMatching;
     }
     if (headersRequest != null) {
-      map['headersRequest'] = headersRequest;
+      map['headers_request'] = headersRequest;
     }
     if (transactionId != null) {
-      map['transactionId'] = transactionId;
+      map['transaction_id'] = transactionId;
     }
     if (transactionPartnerId != null) {
-      map['transactionPartnerId'] = transactionPartnerId;
+      map['transaction_partner_id'] = transactionPartnerId;
     }
     if (transactionPartnerIDUploadNFC != null) {
-      map['transactionPartnerIDUploadNFC'] = transactionPartnerIDUploadNFC;
+      map['transaction_partner_id_upload_nfc'] = transactionPartnerIDUploadNFC;
     }
     if (transactionPartnerIDRecentLocation != null) {
-      map['transactionPartnerIDRecentLocation'] = transactionPartnerIDRecentLocation;
+      map['transaction_partner_id_recent_location'] = transactionPartnerIDRecentLocation;
     }
     if (transactionPartnerIDOriginalLocation != null) {
-      map['transactionPartnerIDOriginalLocation'] = transactionPartnerIDOriginalLocation;
+      map['transaction_partner_id_original_location'] = transactionPartnerIDOriginalLocation;
     }
     if (nameSSLPinning != null) {
-      map['nameSSLPinning'] = nameSSLPinning;
+      map['name_ssl_pinning'] = nameSSLPinning;
     }
     return map;
   }
 
-  /// Quick validator used by UI before invoking native methods
   bool get hasValidManualInput {
     if (idNumber == null || birthday == null || expiredDate == null) {
       return false;
