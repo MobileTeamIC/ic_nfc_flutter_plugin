@@ -17,6 +17,12 @@ class _NfcScreenState extends State<NfcScreen> {
   final _dobCtrl = TextEditingController();
   final _expCtrl = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
+
   /// ----------------------------
   /// CONFIG
   /// ----------------------------
@@ -42,6 +48,12 @@ class _NfcScreenState extends State<NfcScreen> {
       _showError(e.message ?? '');
       return {};
     }
+  }
+
+  void loadData() {
+    _idCtrl.text = SharedPreferenceService.instance.getString(SharedPreferenceKeys.idNumber);
+    _dobCtrl.text = SharedPreferenceService.instance.getString(SharedPreferenceKeys.birthday);
+    _expCtrl.text = SharedPreferenceService.instance.getString(SharedPreferenceKeys.expiredDate);
   }
 
   /// ----------------------------
@@ -81,6 +93,9 @@ class _NfcScreenState extends State<NfcScreen> {
   /// API WRAPPERS
   /// ----------------------------
   Future<Map<String, dynamic>> _qrToNfc() {
+    SharedPreferenceService.instance.setString(SharedPreferenceKeys.idNumber, _idCtrl.text.trim());
+    SharedPreferenceService.instance.setString(SharedPreferenceKeys.birthday, _dobCtrl.text.trim());
+    SharedPreferenceService.instance.setString(SharedPreferenceKeys.expiredDate, _expCtrl.text.trim());
     return _callNfcApi(() {
       return ICNfc.instance.qrToNfcSimple(
         accessToken: SharedPreferenceService.instance.getString(SharedPreferenceKeys.accessToken),
@@ -96,6 +111,9 @@ class _NfcScreenState extends State<NfcScreen> {
   }
 
   Future<Map<String, dynamic>> _mrzToNfc() {
+    SharedPreferenceService.instance.setString(SharedPreferenceKeys.idNumber, _idCtrl.text.trim());
+    SharedPreferenceService.instance.setString(SharedPreferenceKeys.birthday, _dobCtrl.text.trim());
+    SharedPreferenceService.instance.setString(SharedPreferenceKeys.expiredDate, _expCtrl.text.trim());
     return _callNfcApi(() {
       return ICNfc.instance.mrzToNfcSimple(
         accessToken: SharedPreferenceService.instance.getString(SharedPreferenceKeys.accessToken),
@@ -111,6 +129,9 @@ class _NfcScreenState extends State<NfcScreen> {
   }
 
   Future<Map<String, dynamic>> _nfcWithUi() {
+    SharedPreferenceService.instance.setString(SharedPreferenceKeys.idNumber, _idCtrl.text.trim());
+    SharedPreferenceService.instance.setString(SharedPreferenceKeys.birthday, _dobCtrl.text.trim());
+    SharedPreferenceService.instance.setString(SharedPreferenceKeys.expiredDate, _expCtrl.text.trim());
     if (!_validateInputs()) return Future.value({});
     return _callNfcApi(() {
       return ICNfc.instance.onlyNfcWithUiSimple(
@@ -130,6 +151,9 @@ class _NfcScreenState extends State<NfcScreen> {
   }
 
   Future<Map<String, dynamic>> _nfcWithoutUi() {
+    SharedPreferenceService.instance.setString(SharedPreferenceKeys.idNumber, _idCtrl.text.trim());
+    SharedPreferenceService.instance.setString(SharedPreferenceKeys.birthday, _dobCtrl.text.trim());
+    SharedPreferenceService.instance.setString(SharedPreferenceKeys.expiredDate, _expCtrl.text.trim());
     if (!_validateInputs()) return Future.value({});
     return _callNfcApi(() {
       return ICNfc.instance.onlyNfcWithoutUiSimple(

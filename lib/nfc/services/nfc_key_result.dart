@@ -2,8 +2,8 @@ class ICNfcKeyResult {
   static const String dataGroupsResult = "DATA_GROUPS_RESULT";
   static const String dataNFCResult = "DATA_NFC_RESULT";
   static const String clientSessionResult = "CLIENT_SESSION_RESULT";
-  static const String pathImageAvatar = "IMAGE_AVATAR_CARD_NFC";
-  static const String hashImageAvatar = "HASH_AVATAR";
+  static const String pathImageAvatar = "PATH_IMAGE_AVATAR";
+  static const String hashImageAvatar = "HASH_IMAGE_AVATAR";
   static const String dataNFCResultJSON = "LOG_NFC";
   static const String postcodeOriginalLocationResult = "POST_CODE_ORIGINAL_LOCATION_RESULT";
   static const String postcodeRecentLocationResult = "POST_CODE_RECENT_LOCATION_RESULT";

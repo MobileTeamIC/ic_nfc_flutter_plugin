@@ -1,8 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-  import 'package:flutter_plugin_ic_nfc/nfc/services/nfc_key_result.dart';
+import 'package:flutter_plugin_ic_nfc/nfc/services/nfc_key_result.dart';
 
 class LogScreen extends StatefulWidget {
   final Map<String, dynamic> json;
@@ -57,11 +58,16 @@ class _LogScreenState extends State<LogScreen> {
                 padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                 children: [
                   // Text("json: ${widget.json}"),
+                  _buildSafeImage(
+                    widget.json[ICNfcKeyResult.pathImageAvatar] as String?,
+                  ),
+
                   _buildLogItem(
                     context,
                     icon: Icons.image,
                     title: 'Data NFC',
-                    content: widget.json[ICNfcKeyResult.dataNFCResult].toString(),
+                    content:
+                        widget.json[ICNfcKeyResult.dataNFCResult].toString(),
                   ),
                   const SizedBox(height: 12),
                   _buildLogItem(
@@ -90,7 +96,8 @@ class _LogScreenState extends State<LogScreen> {
                     icon: Icons.face,
                     title: 'Postcode original location',
                     content:
-                        widget.json[ICNfcKeyResult.postcodeOriginalLocationResult]
+                        widget
+                            .json[ICNfcKeyResult.postcodeOriginalLocationResult]
                             .toString(),
                   ),
                   const SizedBox(height: 12),
@@ -115,7 +122,8 @@ class _LogScreenState extends State<LogScreen> {
                     context,
                     icon: Icons.document_scanner,
                     title: 'Data groups',
-                    content: widget.json[ICNfcKeyResult.dataGroupsResult].toString(),
+                    content:
+                        widget.json[ICNfcKeyResult.dataGroupsResult].toString(),
                   ),
                   const SizedBox(height: 12),
                   _buildLogItem(
@@ -150,11 +158,39 @@ class _LogScreenState extends State<LogScreen> {
                     context,
                     icon: Icons.document_scanner,
                     title: 'Matching residence for log',
-                    content: widget.json[ICNfcKeyResult.matchingResidenceForLog],
+                    content:
+                        widget.json[ICNfcKeyResult.matchingResidenceForLog],
                   ),
                   const SizedBox(height: 16),
                 ],
               ),
+    );
+  }
+
+  Widget _buildSafeImage(String? path) {
+    if (path == null || path.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    File file;
+    try {
+      if (path.startsWith('file://')) {
+        // Chuyển đổi từ URI sang Path hệ thống
+        file = File(Uri.parse(path).toFilePath());
+      } else {
+        file = File(path);
+      }
+    } catch (e) {
+      return Text('Error parsing path: $e');
+    }
+
+    return Image.file(
+      file,
+      errorBuilder: (context, error, stackTrace) {
+        // Khi lên production thì nên return SizedBox.shrink()
+        // return const SizedBox.shrink();
+        return Text('Image Error: $error');
+      },
     );
   }
 

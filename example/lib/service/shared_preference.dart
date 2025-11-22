@@ -101,4 +101,8 @@ class SharedPreferenceKeys {
   static const String tokenKeyEKYC = 'token_key_ekyc';
   static const String accessTokenEKYC = 'access_token_ekyc';
   static const String isViLanguageMode = 'is_vi_language_mode';
+
+  static const String idNumber = 'id_number';
+  static const String birthday = 'birthday';
+  static const String expiredDate = 'expired_date';
 }
