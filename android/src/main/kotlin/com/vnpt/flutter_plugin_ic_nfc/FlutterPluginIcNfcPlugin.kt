@@ -201,7 +201,7 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
     }
 
     // Hàm helper để put postcode value vào JSONObject (parse JSON string thành Map nếu cần)
-    private fun JSONObject.putPostcodeValue(key: String, jsonString: String?) {
+    private fun JSONObject.putResult(key: String, jsonString: String?) {
         if (jsonString.isNullOrBlank()) return
         
         val parsedValue = parseJsonStringToMap(jsonString)
@@ -341,14 +341,14 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
 
                         pendingResult.success(
                             JSONObject().apply {
-                                putSafe(KeyResultConstantsNFC.DATA_GROUPS_RESULT, dataGroupResult)
-                                putSafe(KeyResultConstantsNFC.PATH_IMAGE_AVATAR, avatarPath)
-                                putSafe(KeyResultConstantsNFC.CLIENT_SESSION_RESULT, clientSession)
-                                putSafe(KeyResultConstantsNFC.DATA_NFC_RESULT, dataNfcResult)
-                                putSafe(KeyResultConstantsNFC.HASH_IMAGE_AVATAR, hashAvatar)
-                                putPostcodeValue(KeyResultConstantsNFC.POST_CODE_ORIGINAL_LOCATION_RESULT, postCodeOriginalLocation)
-                                putPostcodeValue(KeyResultConstantsNFC.POST_CODE_RECENT_LOCATION_RESULT, postCodeRecentLocation)
-                                putSafe(KeyResultConstantsNFC.STATUS_CHIP_AUTHENTICATION, checkAuthChipResult)
+                                putResult(KeyResultConstantsNFC.DATA_GROUPS_RESULT, dataGroupResult)
+                                putResult(KeyResultConstantsNFC.PATH_IMAGE_AVATAR, avatarPath)
+                                putResult(KeyResultConstantsNFC.CLIENT_SESSION_RESULT, clientSession)
+                                putResult(KeyResultConstantsNFC.DATA_NFC_RESULT, dataNfcResult)
+                                putResult(KeyResultConstantsNFC.HASH_IMAGE_AVATAR, hashAvatar)
+                                putResult(KeyResultConstantsNFC.POST_CODE_ORIGINAL_LOCATION_RESULT, postCodeOriginalLocation)
+                                putResult(KeyResultConstantsNFC.POST_CODE_RECENT_LOCATION_RESULT, postCodeRecentLocation)
+                                putResult(KeyResultConstantsNFC.STATUS_CHIP_AUTHENTICATION, checkAuthChipResult)
                             }.toString()
                         )
                     } else {
@@ -370,12 +370,11 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
                         val resultObj = Gson().fromJson(resultStr, NfcResult::class.java)
                         pendingResult.success(
                             JSONObject().apply {
-                                putSafe(KeyResultConstantsNFC.CLIENT_SESSION_RESULT, resultObj.clientSessionNfc)
-                                putSafe(KeyResultConstantsNFC.DATA_NFC_RESULT, resultObj.logNfcResult)
-                                // Parse JSON strings to Maps để đồng bộ với iOS
-                                putPostcodeValue(KeyResultConstantsNFC.POST_CODE_ORIGINAL_LOCATION_RESULT, resultObj.postCodeOriginalLocationResult)
-                                putPostcodeValue(KeyResultConstantsNFC.POST_CODE_RECENT_LOCATION_RESULT, resultObj.postCodeRecentLocationResult)
-                                putSafe(KeyResultConstantsNFC.STATUS_CHIP_AUTHENTICATION, resultObj.statusChipAuthentication)
+                                putResult(KeyResultConstantsNFC.CLIENT_SESSION_RESULT, resultObj.clientSessionNfc)
+                                putResult(KeyResultConstantsNFC.DATA_NFC_RESULT, resultObj.logNfcResult)
+                                putResult(KeyResultConstantsNFC.POST_CODE_ORIGINAL_LOCATION_RESULT, resultObj.postCodeOriginalLocationResult)
+                                putResult(KeyResultConstantsNFC.POST_CODE_RECENT_LOCATION_RESULT, resultObj.postCodeRecentLocationResult)
+                                putResult(KeyResultConstantsNFC.STATUS_CHIP_AUTHENTICATION, resultObj.statusChipAuthentication)
                             }.toString()
                         )
                     } ?: run {
