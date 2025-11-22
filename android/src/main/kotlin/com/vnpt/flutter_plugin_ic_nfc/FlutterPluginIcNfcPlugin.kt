@@ -207,7 +207,7 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
             } to NFC_NO_GUIDE_REQUEST_CODE
             else -> {
                 result.notImplemented()
-                null
+                null to null
             }
         }
         intent?.let { activity.startActivityForResult(it, requestCode ?: NFC_REQUEST_CODE) }
