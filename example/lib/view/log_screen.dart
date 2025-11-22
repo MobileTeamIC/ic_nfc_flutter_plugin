@@ -175,7 +175,6 @@ class _LogScreenState extends State<LogScreen> {
     File file;
     try {
       if (path.startsWith('file://')) {
-        // Chuyển đổi từ URI sang Path hệ thống
         file = File(Uri.parse(path).toFilePath());
       } else {
         file = File(path);
@@ -184,12 +183,29 @@ class _LogScreenState extends State<LogScreen> {
       return Text('Error parsing path: $e');
     }
 
-    return Image.file(
-      file,
+    // Kiểm tra file có tồn tại không trước khi đọc
+    if (!file.existsSync()) {
+      return const SizedBox.shrink();
+    }
+
+    // Đọc file thành bytes.
+    // Lưu ý: readAsBytesSync nhanh gọn cho ảnh nhỏ (CMND/Avatar),
+    // nhưng nếu ảnh quá lớn (vài MB) có thể gây khựng UI nhẹ.
+    Uint8List imageBytes;
+    try {
+      imageBytes = file.readAsBytesSync();
+    } catch (e) {
+      return const SizedBox.shrink();
+    }
+
+    return Image.memory(
+      imageBytes,
+      // Quan trọng: gaplessPlayback giúp ảnh không bị nháy trắng khi reload
+      gaplessPlayback: true,
+      // Thêm key để đảm bảo Widget được vẽ lại nếu bytes thay đổi (thường Image.memory tự xử lý nhưng thêm cho chắc)
+      key: ValueKey(DateTime.now().millisecondsSinceEpoch),
       errorBuilder: (context, error, stackTrace) {
-        // Khi lên production thì nên return SizedBox.shrink()
-        // return const SizedBox.shrink();
-        return Text('Image Error: $error');
+        return const SizedBox.shrink();
       },
     );
   }
