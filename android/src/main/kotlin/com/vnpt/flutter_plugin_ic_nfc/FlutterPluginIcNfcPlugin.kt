@@ -182,6 +182,55 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
         return list
     }
 
+    // Hàm helper để parse JSON string thành Map hoặc trả về null nếu không phải JSON hợp lệ
+    private fun parseJsonStringToMap(jsonString: String?): Any? {
+        if (jsonString.isNullOrBlank()) return null
+        return try {
+            val jsonObject = JSONObject(jsonString)
+            toMap(jsonObject)
+        } catch (e: Exception) {
+            // Nếu không phải JSONObject, thử parse như JSONArray
+            try {
+                val jsonArray = JSONArray(jsonString)
+                toList(jsonArray)
+            } catch (e2: Exception) {
+                // Nếu không phải JSON hợp lệ, trả về string gốc
+                jsonString
+            }
+        }
+    }
+
+    // Hàm helper để put postcode value vào JSONObject (parse JSON string thành Map nếu cần)
+    private fun JSONObject.putPostcodeValue(key: String, jsonString: String?) {
+        if (jsonString.isNullOrBlank()) return
+        
+        val parsedValue = parseJsonStringToMap(jsonString)
+        when (parsedValue) {
+            is Map<*, *> -> {
+                // Nếu là Map, chuyển thành JSONObject
+                try {
+                    put(key, JSONObject(parsedValue as Map<String, Any>))
+                } catch (e: Exception) {
+                    // Nếu chuyển đổi thất bại, giữ nguyên string
+                    putSafe(key, jsonString)
+                }
+            }
+            is List<*> -> {
+                // Nếu là List, chuyển thành JSONArray
+                try {
+                    put(key, JSONArray(parsedValue as List<Any>))
+                } catch (e: Exception) {
+                    // Nếu chuyển đổi thất bại, giữ nguyên string
+                    putSafe(key, jsonString)
+                }
+            }
+            else -> {
+                // Nếu không phải Map hoặc List, giữ nguyên string
+                putSafe(key, jsonString)
+            }
+        }
+    }
+
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, CHANNEL)
         channel.setMethodCallHandler(this)
@@ -297,14 +346,8 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
                                 putSafe(KeyResultConstantsNFC.CLIENT_SESSION_RESULT, clientSession)
                                 putSafe(KeyResultConstantsNFC.DATA_NFC_RESULT, dataNfcResult)
                                 putSafe(KeyResultConstantsNFC.HASH_IMAGE_AVATAR, hashAvatar)
-                                putSafe(
-                                    KeyResultConstantsNFC.POST_CODE_ORIGINAL_LOCATION_RESULT,
-                                    postCodeOriginalLocation
-                                )
-                                putSafe(
-                                    KeyResultConstantsNFC.POST_CODE_RECENT_LOCATION_RESULT,
-                                    postCodeRecentLocation
-                                )
+                                putPostcodeValue(KeyResultConstantsNFC.POST_CODE_ORIGINAL_LOCATION_RESULT, postCodeOriginalLocation)
+                                putPostcodeValue(KeyResultConstantsNFC.POST_CODE_RECENT_LOCATION_RESULT, postCodeRecentLocation)
                                 putSafe(KeyResultConstantsNFC.STATUS_CHIP_AUTHENTICATION, checkAuthChipResult)
                             }.toString()
                         )
@@ -329,14 +372,9 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
                             JSONObject().apply {
                                 putSafe(KeyResultConstantsNFC.CLIENT_SESSION_RESULT, resultObj.clientSessionNfc)
                                 putSafe(KeyResultConstantsNFC.DATA_NFC_RESULT, resultObj.logNfcResult)
-                                putSafe(
-                                    KeyResultConstantsNFC.POST_CODE_ORIGINAL_LOCATION_RESULT,
-                                    resultObj.postCodeOriginalLocationResult
-                                )
-                                putSafe(
-                                    KeyResultConstantsNFC.POST_CODE_RECENT_LOCATION_RESULT,
-                                    resultObj.postCodeRecentLocationResult
-                                )
+                                // Parse JSON strings to Maps để đồng bộ với iOS
+                                putPostcodeValue(KeyResultConstantsNFC.POST_CODE_ORIGINAL_LOCATION_RESULT, resultObj.postCodeOriginalLocationResult)
+                                putPostcodeValue(KeyResultConstantsNFC.POST_CODE_RECENT_LOCATION_RESULT, resultObj.postCodeRecentLocationResult)
                                 putSafe(KeyResultConstantsNFC.STATUS_CHIP_AUTHENTICATION, resultObj.statusChipAuthentication)
                             }.toString()
                         )
