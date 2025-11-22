@@ -74,18 +74,19 @@ public class FlutterPluginIcNfcPlugin: NSObject, FlutterPlugin {
       sendUnsupportedVersionError()
       return
     }
-      
+
     let reader = ICMainNFCReaderRouter.createModule() as! ICMainNFCReaderViewController
-
+    
     reader.icMainNFCDelegate = self
-
+    reader.readerCardMode = QRCode
+    
     configureAuthentication(for: reader, with: args)
     configureNFCCommonOptions(for: reader, args: args)
     configureUIOptions(for: reader, args: args)
     
     reader.modalPresentationStyle = .fullScreen
     reader.modalTransitionStyle = .coverVertical
-
+    
     controller.present(reader, animated: true)
   }
 
@@ -96,17 +97,19 @@ public class FlutterPluginIcNfcPlugin: NSObject, FlutterPlugin {
       sendUnsupportedVersionError()
       return
     }
+      
     let reader = ICMainNFCReaderRouter.createModule() as! ICMainNFCReaderViewController
 
     reader.icMainNFCDelegate = self
-
+    reader.readerCardMode = MRZCode
+    
     configureAuthentication(for: reader, with: args)
     configureNFCCommonOptions(for: reader, args: args)
     configureUIOptions(for: reader, args: args)
     
     reader.modalPresentationStyle = .fullScreen
     reader.modalTransitionStyle = .coverVertical
-
+    
     controller.present(reader, animated: true)
   }
 
@@ -125,10 +128,17 @@ public class FlutterPluginIcNfcPlugin: NSObject, FlutterPlugin {
 
     let reader = ICMainNFCReaderRouter.createModule() as! ICMainNFCReaderViewController
 
+    reader.icMainNFCDelegate = self
+    reader.readerCardMode = NFCReader
+
+    reader.idNumberCard = args[KeyArgumentMethodChannel.idNumber] as? String ?? ""
+    reader.birthdayCard = args[KeyArgumentMethodChannel.birthday] as? String ?? ""
+    reader.expiredDateCard = args[KeyArgumentMethodChannel.expiredDate] as? String ?? ""
+
     configureAuthentication(for: reader, with: args)
     configureNFCCommonOptions(for: reader, args: args)
     configureUIOptions(for: reader, args: args)
-    
+
     reader.modalPresentationStyle = .fullScreen
     reader.modalTransitionStyle = .coverVertical
 
@@ -149,22 +159,35 @@ public class FlutterPluginIcNfcPlugin: NSObject, FlutterPlugin {
     }
 
     let reader = ICMainNFCReaderRouter.createModule() as! ICMainNFCReaderViewController
-    
 
     reader.icMainNFCDelegate = self
+    reader.readerCardMode = NFCOutside
+
+    reader.idNumberCard = args[KeyArgumentMethodChannel.idNumber] as? String ?? ""
+    reader.birthdayCard = args[KeyArgumentMethodChannel.birthday] as? String ?? ""
+    reader.expiredDateCard = args[KeyArgumentMethodChannel.expiredDate] as? String ?? ""
+
     configureAuthentication(for: reader, with: args)
     configureNFCCommonOptions(for: reader, args: args, includeLanguageAndTutorial: false)
-    reader.idNumberCard = args["idNumber"] as? String ?? ""
-    reader.birthdayCard = args["birthday"] as? String ?? ""
-    reader.expiredDateCard = args["expiredDate"] as? String ?? ""
-    reader.startNFCReaderOutSide()
+    configureUIOptions(for: reader, args: args)
+
+    reader.modalPresentationStyle = .fullScreen
+    reader.modalTransitionStyle = .coverVertical
+    controller.present(reader, animated: true) {
+      print("NFCOutside reader presented, starting NFC read")
+      reader.startNFCReaderOutSide()
+    }
   }
 
   // MARK: - Helpers
   private func convertReaderCardMode(from args: [String: Any]) -> ReaderCardMode {
-    switch args["readerCardMode"] as? String ?? "" {
+    guard let modeString = args[KeyArgumentMethodChannel.readerCardMode] as? String else {
+      return QRCode // Default
+    }
+    
+    switch modeString {
     case "QRCode":
-        return QRCode
+      return QRCode
     case "MRZCode":
       return MRZCode
     case "NFCReader":
@@ -218,7 +241,6 @@ public class FlutterPluginIcNfcPlugin: NSObject, FlutterPlugin {
       reader.isDisableTutorial = args[KeyArgumentMethodChannel.isDisableTutorial] as? Bool ?? false
     }
 
-    reader.readerCardMode = convertReaderCardMode(from: args)
     reader.isEnableUploadImage = args[KeyArgumentMethodChannel.isEnableUploadImage] as? Bool ?? true
     reader.isEnablePostcodeMatching = args[KeyArgumentMethodChannel.isEnablePostcodeMatching] as? Bool ?? false
     reader.inputClientSession = args[KeyArgumentMethodChannel.inputClientSession] as? String ?? ""
@@ -271,7 +293,6 @@ public class FlutterPluginIcNfcPlugin: NSObject, FlutterPlugin {
 
   private func configureUIOptions(for reader: ICMainNFCReaderViewController, args: [String: Any]) {
     reader.isShowTutorial = args[KeyArgumentMethodChannel.isShowTutorial] as? Bool ?? false
-//    reader.isShowLogo = args[KeyArgumentMethodChannel.isShowLogo] as? Bool ?? false
     reader.transactionPartnerIDUploadNFC = args[KeyArgumentMethodChannel.transactionPartnerIDUploadNFC] as? String ?? ""
     reader.transactionPartnerIDRecentLocation = args[KeyArgumentMethodChannel.transactionPartnerIDRecentLocation] as? String ?? ""
     reader.transactionPartnerIDOriginalLocation = args[KeyArgumentMethodChannel.transactionPartnerIDOriginalLocation] as? String ?? ""
@@ -300,14 +321,14 @@ public class FlutterPluginIcNfcPlugin: NSObject, FlutterPlugin {
     ]
   }
 
-    func UIColorFromRGB(rgbValue: UInt, alpha: CGFloat) -> UIColor {
-        return UIColor(
-            red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
-            green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
-            blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
-            alpha: CGFloat(alpha)
-        )
-    }
+  func UIColorFromRGB(rgbValue: UInt, alpha: CGFloat) -> UIColor {
+    return UIColor(
+      red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
+      green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
+      blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
+      alpha: CGFloat(alpha)
+    )
+  }
 
   private func sendUnsupportedVersionError() {
     pendingResult?(FlutterError(code: "UNSUPPORTED_VERSION",
@@ -331,48 +352,91 @@ public class FlutterPluginIcNfcPlugin: NSObject, FlutterPlugin {
   }
 }
 
+// MARK: - ICMainNFCReaderDelegate
 extension FlutterPluginIcNfcPlugin: ICMainNFCReaderDelegate {
-  public func icNFCMainDismissed() {
+
+  public func icNFCMainDismissed(_ lastStep: ICNFCLastStep) {
+    print("SDK dismissed at step: \(lastStep)")
+    
+    var stepName = "Unknown"
+    switch lastStep {
+    case ICNFCScanQRCode:
+      stepName = "Scan QR Code"
+    case ICNFCScanMRZCode:
+      stepName = "Scan MRZ Code"
+    case ICNFCReaderNFC:
+      stepName = "Reading NFC"
+    case ICNFCHelpQRCode:
+      stepName = "QR Help Screen"
+    case ICNFCHelpMRZCode:
+      stepName = "MRZ Help Screen"
+    case ICNFCNoSupportNFC:
+      stepName = "NFC Not Supported"
+    case ICNFCMissingInputs:
+      stepName = "Missing Inputs"
+    case ICNFCNoMoreRetryNFC:
+      stepName = "No More Retry"
+    case ICNFCPermissionCamera:
+      stepName = "Camera Permission"
+    default:
+      stepName = "Unknown Step"
+    }
+    
     pendingResult?(FlutterError(code: "CANCELLED",
-                                message: "User closed NFC SDK.",
-                                details: nil))
+                                message: "User closed NFC SDK at step: \(stepName)",
+                                details: ["lastStep": stepName]))
     pendingResult = nil
   }
 
   public func icNFCCardReaderGetResult() {
     let saveData = ICNFCSaveData.shared()
 
+    // Serialize NFC data to JSON
     var dataNFCResultJSON = ""
     do {
       let jsonData = try JSONSerialization.data(withJSONObject: saveData.dataNFCResult, options: .prettyPrinted)
       dataNFCResultJSON = String(data: jsonData, encoding: .utf8) ?? ""
     } catch {
-      print(error.localizedDescription)
+      print("JSON serialization error: \(error.localizedDescription)")
     }
 
     let dict: [String: Any] = [
-      KeyResultConstantsNFC.dataGroupsResult: saveData.dataGroupsResult,
-      KeyResultConstantsNFC.dataNFCResult: saveData.dataNFCResult,
-      KeyResultConstantsNFC.clientSessionResult: saveData.clientSessionResult,
-      KeyResultConstantsNFC.pathImageAvatar: saveData.pathImageAvatar.absoluteString,
-      KeyResultConstantsNFC.hashImageAvatar: saveData.hashImageAvatar,
-      KeyResultConstantsNFC.dataNFCResultJSON: dataNFCResultJSON,
-      KeyResultConstantsNFC.postcodeOriginalLocationResult: saveData.postcodeOriginalLocationResult,
-      KeyResultConstantsNFC.postcodeRecentLocationResult: saveData.postcodeRecentLocationResult,
-      KeyResultConstantsNFC.hashAvatarForLog: saveData.hashAvatarForLog,
-      KeyResultConstantsNFC.hashDGsForLog: saveData.hashDGsForLog,
-      KeyResultConstantsNFC.nfcForLog: saveData.nfcForLog,
-      KeyResultConstantsNFC.matchingOriginForLog: saveData.matchingOriginForLog,
-      KeyResultConstantsNFC.matchingResidenceForLog: saveData.matchingResidenceForLog
+        KeyResultConstantsNFC.dataGroupsResult: saveData.dataGroupsResult,
+        KeyResultConstantsNFC.dataNFCResult: saveData.dataNFCResult,
+        KeyResultConstantsNFC.clientSessionResult: saveData.clientSessionResult,
+        KeyResultConstantsNFC.pathImageAvatar: saveData.pathImageAvatar.absoluteString,
+        KeyResultConstantsNFC.hashImageAvatar: saveData.hashImageAvatar,
+        KeyResultConstantsNFC.dataNFCResultJSON: dataNFCResultJSON,
+        KeyResultConstantsNFC.postcodeOriginalLocationResult: saveData.postcodeOriginalLocationResult,
+        KeyResultConstantsNFC.postcodeRecentLocationResult: saveData.postcodeRecentLocationResult,
+        KeyResultConstantsNFC.hashAvatarForLog: saveData.hashAvatarForLog,
+        KeyResultConstantsNFC.hashDGsForLog: saveData.hashDGsForLog,
+        KeyResultConstantsNFC.nfcForLog: saveData.nfcForLog,
+        KeyResultConstantsNFC.matchingOriginForLog: saveData.matchingOriginForLog,
+        KeyResultConstantsNFC.matchingResidenceForLog: saveData.matchingResidenceForLog
     ]
 
     do {
       let jsonData = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
-      let jsonString = String(data: jsonData, encoding: .utf8)
-      pendingResult?(jsonString)
-      pendingResult = nil
+      if let jsonString = String(data: jsonData, encoding: .utf8) {
+        print(jsonString)
+        pendingResult?(jsonString)
+        pendingResult = nil
+      } else {
+        sendJSONEncodingError(NSError(domain: "NFC",
+                                      code: -1,
+                                      userInfo: [NSLocalizedDescriptionKey: "Failed to encode JSON to string"]))
+      }
     } catch {
       sendJSONEncodingError(error)
     }
+  }
+
+  public func icNFCCardReader(_ state: ICNFCReaderState, progress: Int, error: String) {
+    print("NFC State: \(state), Progress: \(progress)%, Error: \(error)")
+  }
+
+  public func icNFCPopupReaderChipDisappear() {
+    print("NFC popup disappeared")
   }
 }
