@@ -10,9 +10,15 @@ MAVEN_LOCAL="$PLUGIN_DIR/android/libs-maven-local"
 
 # groupId|artifactId|version|aarFileName
 DEPENDENCIES=(
-  "com.vnpt.flutter_plugin_ic_nfc|vnpt-nfc-sdk|1.8.0|vnpt_nfc_sdk-v1.8.0.aar"
-  "com.vnpt.flutter_plugin_ic_nfc|scanqr-ic-sdk|1.0.6|scanqr_ic_sdk-v1.0.6.aar"
+  "com.vnpt.flutter_plugin_ic_nfc|vnpt-nfc-sdk|1.8.0|vnpt_nfc_sdk-release-v1.8.0.aar"
+  "com.vnpt.flutter_plugin_ic_nfc|scanqr-ic-sdk|1.0.6|scanqr_ic_sdk-release-v1.0.6.aar"
 )
+
+# Verify libs directory exists
+if [[ ! -d "$LIBS_DIR" ]]; then
+  echo "❌ Libs directory not found: $LIBS_DIR"
+  exit 1
+fi
 
 timestamp=$(date +%Y%m%d%H%M%S)
 echo "Publishing AARs to local Maven repo: $MAVEN_LOCAL"
@@ -25,7 +31,9 @@ for dependency in "${DEPENDENCIES[@]}"; do
     exit 1
   fi
 
-  TARGET_DIR="$MAVEN_LOCAL/${GROUP_ID//.//}/$ARTIFACT_ID/$VERSION"
+  # Convert groupId dots to slashes for Maven directory structure
+  GROUP_PATH="${GROUP_ID//.//}"
+  TARGET_DIR="$MAVEN_LOCAL/$GROUP_PATH/$ARTIFACT_ID/$VERSION"
   mkdir -p "$TARGET_DIR"
 
   echo "→ Publishing $FILE_NAME as $GROUP_ID:$ARTIFACT_ID:$VERSION"
@@ -44,7 +52,10 @@ for dependency in "${DEPENDENCIES[@]}"; do
 </project>
 EOF
 
-  cat > "$MAVEN_LOCAL/${GROUP_ID//./\/}/$ARTIFACT_ID/maven-metadata.xml" <<EOF
+  # Create maven-metadata.xml in artifact directory (not version directory)
+  METADATA_DIR="$MAVEN_LOCAL/$GROUP_PATH/$ARTIFACT_ID"
+  mkdir -p "$METADATA_DIR"
+  cat > "$METADATA_DIR/maven-metadata.xml" <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata>
   <groupId>$GROUP_ID</groupId>

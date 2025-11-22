@@ -37,28 +37,55 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
         fun navigateToOnlyNFC(ctx: Context, json: JSONObject): Intent {
             return Intent(ctx, VnptScanNFCActivity::class.java).also {
 
+                /**
+                 * Truyền access token chứa bearer
+                 */
                 it.putExtra(KeyIntentConstantsNFC.ACCESS_TOKEN, json.optString(KeyArgumentMethodChannel.ACCESS_TOKEN, ""))
-
+                /**
+                 * Truyền token id
+                 */
                 it.putExtra(KeyIntentConstantsNFC.TOKEN_ID, json.optString(KeyArgumentMethodChannel.TOKEN_ID, ""))
-
+                /**
+                 * Truyền token key
+                 */
                 it.putExtra(KeyIntentConstantsNFC.TOKEN_KEY, json.optString(KeyArgumentMethodChannel.TOKEN_KEY, ""))
-
+                /**
+                 * Truyền access token ekyc chứa bearer
+                 */
                 it.putExtra(KeyIntentConstantsNFC.ACCESS_TOKEN_EKYC, json.optString(KeyArgumentMethodChannel.ACCESS_TOKEN_EKYC, ""))
-
+                /**
+                 * Truyền token id ekyc
+                 */
                 it.putExtra(KeyIntentConstantsNFC.TOKEN_ID_EKYC, json.optString(KeyArgumentMethodChannel.TOKEN_ID_EKYC, ""))
-
+                /**
+                 * Truyền token key ekyc
+                 */
                 it.putExtra(KeyIntentConstantsNFC.TOKEN_KEY_EKYC, json.optString(KeyArgumentMethodChannel.TOKEN_KEY_EKYC, ""))
-
-                it.putExtra(
-                    KeyIntentConstantsNFC.LANGUAGE_SDK,
-                    mapLanguage(json.optString(KeyArgumentMethodChannel.LANGUAGE_SDK)).value
-                )
-
-                it.putExtra(KeyIntentConstantsNFC.IS_ENABLE_GOT_IT, json.optBoolean(KeyArgumentMethodChannel.IS_ENABLE_GOT_IT, true))
-                it.putExtra(KeyIntentConstantsNFC.IS_SHOW_TUTORIAL, json.optBoolean(KeyArgumentMethodChannel.IS_SHOW_TUTORIAL, false))
-                it.putExtra(KeyIntentConstantsNFC.IS_ENABLE_UPLOAD_IMAGE, json.optBoolean(KeyArgumentMethodChannel.IS_ENABLE_UPLOAD_IMAGE, true))
-
-                it.putExtra(KeyIntentConstantsNFC.IS_ENABLE_POSTCODE_MATCHING, json.optBoolean(KeyArgumentMethodChannel.IS_ENABLE_POSTCODE_MATCHING, true))
+                /**
+                 * điều chỉnh ngôn ngữ tiếng việt
+                 *    - vi: tiếng việt
+                 *    - en: tiếng anh
+                 */
+                it.putExtra(KeyIntentConstantsNFC.LANGUAGE_SDK, SDKEnumNFC.LanguageEnum.VIETNAMESE.value)
+                /**
+                 * hiển thị màn hình hướng dẫn + hiển thị nút bỏ qua hướng dẫn
+                 * - mặc định luôn luôn hiển thị màn hình hướng dẫn
+                 *    - true: hiển thị nút bỏ qua
+                 *    - false: ko hiển thị nút bỏ qua
+                 */
+                it.putExtra(KeyIntentConstantsNFC.IS_ENABLE_GOT_IT, true)
+                /**
+                 * bật tính năng upload ảnh
+                 *    - true: bật tính năng
+                 *    - false: tắt tính năng
+                 */
+                it.putExtra(KeyIntentConstantsNFC.IS_ENABLE_UPLOAD_IMAGE, true)
+                /**
+                 * bật tính năng get Postcode
+                 *    - true: bật tính năng
+                 *    - false: tắt tính năng
+                 */
+                it.putExtra(KeyIntentConstantsNFC.IS_ENABLE_POSTCODE_MATCHING, true)
                 /**
                  * truyền các giá trị đọc thẻ
                  *    - nếu không truyền gì mặc định sẽ đọc tất cả (MRZ,Verify Document,Image Avatar)
@@ -67,29 +94,20 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
                  * eg: chỉ đọc thông tin MRZ
                  *    intArrayOf(SDKEnumNFC.ReadingNFCTags.MRZInfo.value)
                  */
-                val readingTags = json.optJSONArray(KeyArgumentMethodChannel.READING_TAGS_NFC)
-                if (readingTags != null && readingTags.length() > 0) {
-                    val tagsArray = IntArray(readingTags.length())
-                    for (i in 0 until readingTags.length()) {
-                        tagsArray[i] = readingTags.optInt(i)
-                    }
-                    it.putExtra(KeyIntentConstantsNFC.READING_TAGS_NFC, tagsArray)
-                } else {
-                    it.putExtra(
-                        KeyIntentConstantsNFC.READING_TAGS_NFC,
-                        intArrayOf(
-                            SDKEnumNFC.ReadingNFCTags.MRZInfo.value,
-                            SDKEnumNFC.ReadingNFCTags.VerifyDocumentInfo.value,
-                            SDKEnumNFC.ReadingNFCTags.ImageAvatarInfo.value
-                        )
+                it.putExtra(
+                    KeyIntentConstantsNFC.READING_TAGS_NFC,
+                    intArrayOf(
+                        SDKEnumNFC.ReadingNFCTags.MRZInfo.value,
+                        SDKEnumNFC.ReadingNFCTags.VerifyDocumentInfo.value,
+                        SDKEnumNFC.ReadingNFCTags.ImageAvatarInfo.value
                     )
-                }
-
+                )
+                /**
+                 * Truyền chế độ đọc thẻ
+                 */
                 it.putExtra(KeyIntentConstantsNFC.READER_CARD_MODE, SDKEnumNFC.ReaderCardMode.NONE.getValue())
                 // set baseDomain="" => sử dụng mặc định là Product
-                it.putExtra(KeyIntentConstantsNFC.BASE_URL, json.optString(KeyArgumentMethodChannel.BASE_URL, ""))
-                it.putExtra(KeyIntentConstantsNFC.INPUT_CLIENT_SESSION, json.optString(KeyArgumentMethodChannel.INPUT_CLIENT_SESSION, ""))
-                it.putExtra(KeyIntentConstantsNFC.NAME_VIDEO_HELP_NFC, json.optString(KeyArgumentMethodChannel.NAME_VIDEO_HELP_NFC, ""))
+                it.putExtra(KeyIntentConstantsNFC.BASE_URL, "")
                 // truyền id định danh căn cước công dân
                 it.putExtra(KeyIntentConstantsNFC.ID_NUMBER_CARD, json.optString(KeyArgumentMethodChannel.ID_NUMBER, ""))
                 // truyền ngày sinh ghi trên căn cước công dân
@@ -200,10 +218,10 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
     }
 
     private val resultActivityListener = PluginRegistry.ActivityResultListener { requestCode, resultCode, data ->
-        if (requestCode == EKYC_REQUEST_CODE) {
+        if (requestCode == NFC_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 if (data != null) {
-
+                    println("FlutterPluginIcNfcPlugin: Nhận kết quả thành công")
                     var dataGroupResult = data.getStringExtra(KeyResultConstantsNFC.DATA_GROUPS_RESULT)
                     /**
                      * đường dẫn ảnh mặt trước trong thẻ chip lưu trong cache
@@ -373,6 +391,9 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
                SDKEnumNFC.ReadingNFCTags.ImageAvatarInfo.value
             )
          )
+
+          it.putExtra(KeyIntentConstantsNFC.READER_CARD_MODE, SDKEnumNFC.ReaderCardMode.QRCODE.getValue())
+
          /**
           * set baseDomain="" => sử dụng mặc định là Product của VNPT
           */
@@ -407,88 +428,75 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
    // Thực hiện quét mã MRZ và đọc thông tin thẻ Căn cước NFC
    private fun navigateTo_MRZ_NFC(ctx: Context, json: JSONObject): Intent {
       return Intent(ctx, VnptScanNFCActivity::class.java).also {
-         /**
-          * Truyền access token chứa bearer
-          */
-         it.putExtra(KeyIntentConstantsNFC.ACCESS_TOKEN, json.optString(KeyArgumentMethodChannel.ACCESS_TOKEN, ""))
-         /**
-          * Truyền token id
-          */
-         it.putExtra(KeyIntentConstantsNFC.TOKEN_ID, json.optString(KeyArgumentMethodChannel.TOKEN_ID, ""))
-         /**
-          * Truyền token key
-          */
-         it.putExtra(KeyIntentConstantsNFC.TOKEN_KEY, json.optString(KeyArgumentMethodChannel.TOKEN_KEY, ""))
-         /**
-          * Truyền access token ekyc chứa bearer
-          */
-         it.putExtra(KeyIntentConstantsNFC.ACCESS_TOKEN_EKYC, json.optString(KeyArgumentMethodChannel.ACCESS_TOKEN_EKYC, ""))
-         /**
-          * Truyền token id ekyc
-          */
-         it.putExtra(KeyIntentConstantsNFC.TOKEN_ID_EKYC, json.optString(KeyArgumentMethodChannel.TOKEN_ID_EKYC, ""))
-         /**
-          * Truyền token key ekyc
-          */
-         it.putExtra(KeyIntentConstantsNFC.TOKEN_KEY_EKYC, json.optString(KeyArgumentMethodChannel.TOKEN_KEY_EKYC, ""))
-         /**
-          * điều chỉnh ngôn ngữ tiếng việt
-          *    - vi: tiếng việt
-          *    - en: tiếng anh
-          */
-         it.putExtra(
-             KeyIntentConstantsNFC.LANGUAGE_SDK,
-             mapLanguage(json.optString(KeyArgumentMethodChannel.LANGUAGE_SDK)).value
-         )
-         /**
-          * hiển thị màn hình hướng dẫn + hiển thị nút bỏ qua hướng dẫn
-          * - mặc định luôn luôn hiển thị màn hình hướng dẫn
-          *    - true: hiển thị nút bỏ qua
-          *    - false: ko hiển thị nút bỏ qua
-          */
-         it.putExtra(KeyIntentConstantsNFC.IS_ENABLE_GOT_IT, json.optBoolean(KeyArgumentMethodChannel.IS_ENABLE_GOT_IT, true))
-         it.putExtra(KeyIntentConstantsNFC.IS_SHOW_TUTORIAL, json.optBoolean(KeyArgumentMethodChannel.IS_SHOW_TUTORIAL, false))
-         /**
-          * bật tính năng upload ảnh
-          *    - true: bật tính năng
-          *    - false: tắt tính năng
-          */
-         it.putExtra(KeyIntentConstantsNFC.IS_ENABLE_UPLOAD_IMAGE, json.optBoolean(KeyArgumentMethodChannel.IS_ENABLE_UPLOAD_IMAGE, true))
-         /**
-          * bật tính năng get Postcode
-          *    - true: bật tính năng
-          *    - false: tắt tính năng
-          */
-         it.putExtra(KeyIntentConstantsNFC.IS_ENABLE_POSTCODE_MATCHING, json.optBoolean(KeyArgumentMethodChannel.IS_ENABLE_POSTCODE_MATCHING, true))
-         /**
-          * truyền các giá trị đọc thẻ
-          *    - nếu không truyền gì mặc định sẽ đọc tất cả (MRZ,Verify Document,Image Avatar)
-          *    - giá trị truyền vào là 1 mảng int: nếu muốn đọc giá trị nào sẽ truyền
-          *      giá trị đó vào mảng
-          * eg: chỉ đọc thông tin MRZ
-          *    intArrayOf(SDKEnumNFC.ReadingNFCTags.MRZInfo.value)
-          */
-         val readingTags = json.optJSONArray(KeyArgumentMethodChannel.READING_TAGS_NFC)
-         if (readingTags != null && readingTags.length() > 0) {
-            val tagsArray = IntArray(readingTags.length())
-            for (i in 0 until readingTags.length()) {
-               tagsArray[i] = readingTags.optInt(i)
-            }
-            it.putExtra(KeyIntentConstantsNFC.READING_TAGS_NFC, tagsArray)
-         } else {
-            it.putExtra(
-               KeyIntentConstantsNFC.READING_TAGS_NFC,
-               intArrayOf(
+          /**
+           * Truyền access token chứa bearer
+           */
+          it.putExtra(KeyIntentConstantsNFC.ACCESS_TOKEN, json.optString(KeyArgumentMethodChannel.ACCESS_TOKEN, ""))
+          /**
+           * Truyền token id
+           */
+          it.putExtra(KeyIntentConstantsNFC.TOKEN_ID, json.optString(KeyArgumentMethodChannel.TOKEN_ID, ""))
+          /**
+           * Truyền token key
+           */
+          it.putExtra(KeyIntentConstantsNFC.TOKEN_KEY, json.optString(KeyArgumentMethodChannel.TOKEN_KEY, ""))
+          /**
+           * Truyền access token ekyc chứa bearer
+           */
+          it.putExtra(KeyIntentConstantsNFC.ACCESS_TOKEN_EKYC, json.optString(KeyArgumentMethodChannel.ACCESS_TOKEN_EKYC, ""))
+          /**
+           * Truyền token id ekyc
+           */
+          it.putExtra(KeyIntentConstantsNFC.TOKEN_ID_EKYC, json.optString(KeyArgumentMethodChannel.TOKEN_ID_EKYC, ""))
+          /**
+           * Truyền token key ekyc
+           */
+          it.putExtra(KeyIntentConstantsNFC.TOKEN_KEY_EKYC, json.optString(KeyArgumentMethodChannel.TOKEN_KEY_EKYC, ""))
+          /**
+           * điều chỉnh ngôn ngữ tiếng việt
+           *    - vi: tiếng việt
+           *    - en: tiếng anh
+           */
+          it.putExtra(KeyIntentConstantsNFC.LANGUAGE_SDK, SDKEnumNFC.LanguageEnum.VIETNAMESE.value)
+          /**
+           * hiển thị màn hình hướng dẫn + hiển thị nút bỏ qua hướng dẫn
+           * - mặc định luôn luôn hiển thị màn hình hướng dẫn
+           *    - true: hiển thị nút bỏ qua
+           *    - false: ko hiển thị nút bỏ qua
+           */
+          it.putExtra(KeyIntentConstantsNFC.IS_ENABLE_GOT_IT, true)
+          /**
+           * bật tính năng upload ảnh
+           *    - true: bật tính năng
+           *    - false: tắt tính năng
+           */
+          it.putExtra(KeyIntentConstantsNFC.IS_ENABLE_UPLOAD_IMAGE, true)
+          /**
+           * bật tính năng get Postcode
+           *    - true: bật tính năng
+           *    - false: tắt tính năng
+           */
+          it.putExtra(KeyIntentConstantsNFC.IS_ENABLE_POSTCODE_MATCHING, true)
+          /**
+           * truyền các giá trị đọc thẻ
+           *    - nếu không truyền gì mặc định sẽ đọc tất cả (MRZ,Verify Document,Image Avatar)
+           *    - giá trị truyền vào là 1 mảng int: nếu muốn đọc giá trị nào sẽ truyền
+           *      giá trị đó vào mảng
+           * eg: chỉ đọc thông tin MRZ
+           *    intArrayOf(SDKEnumNFC.ReadingNFCTags.MRZInfo.value)
+           */
+          it.putExtra(
+              KeyIntentConstantsNFC.READING_TAGS_NFC,
+              intArrayOf(
                   SDKEnumNFC.ReadingNFCTags.MRZInfo.value,
                   SDKEnumNFC.ReadingNFCTags.VerifyDocumentInfo.value,
                   SDKEnumNFC.ReadingNFCTags.ImageAvatarInfo.value
-               )
-            )
-         }
-         /**
-          * Truyền chế độ đọc thẻ
-          */
-         it.putExtra(KeyIntentConstantsNFC.READER_CARD_MODE, SDKEnumNFC.ReaderCardMode.MRZ_CODE.getValue())
+              )
+          )
+          /**
+           * Truyền chế độ đọc thẻ
+           */
+          it.putExtra(KeyIntentConstantsNFC.READER_CARD_MODE, SDKEnumNFC.ReaderCardMode.MRZ_CODE.getValue())
       }
    }
 
@@ -510,10 +518,11 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         activity = binding.activity
-        binding.removeActivityResultListener(resultActivityListener)
+        binding.addActivityResultListener(resultActivityListener)
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
+        activity = null
     }
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
