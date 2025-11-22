@@ -36,7 +36,6 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
 
         fun navigateToOnlyNFC(ctx: Context, json: JSONObject): Intent {
             return Intent(ctx, VnptScanNFCActivity::class.java).also {
-
                 /**
                  * Truyền access token chứa bearer
                  */
@@ -151,7 +150,7 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
     // when the Flutter Engine is detached from the Activity
     private lateinit var channel: MethodChannel
     private var result: Result? = null
-    private var activity: Activity? = null
+    private var binding: ActivityPluginBinding? = null
 
      // Hàm helper để chuyển JSONObject thành Map
     fun toMap(jsonObject: JSONObject): Map<String, Any> {
@@ -192,25 +191,26 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
         call: MethodCall,
         result: Result
     ) {
-        val activity = this.activity ?: return
+        val binding = this.binding ?: return
+        val activity = binding.activity
         this.result = result
 
         val json = parseJsonFromArgs(call)
-        val intent = when (call.method) {
-            "NFC_QR_CODE" -> navigateToNfcQrCode(activity, json)
-            "NFC_MRZ_CODE" -> navigateTo_MRZ_NFC(activity, json)
-            "NFC_ONLY_UI" -> navigateToOnlyNFC(activity, json)
+        val (intent, requestCode) = when (call.method) {
+            "NFC_QR_CODE" -> navigateToNfcQrCode(activity, json) to NFC_REQUEST_CODE
+            "NFC_MRZ_CODE" -> navigateTo_MRZ_NFC(activity, json) to NFC_REQUEST_CODE
+            "NFC_ONLY_UI" -> navigateToOnlyNFC(activity, json) to NFC_REQUEST_CODE
             "NFC_ONLY_WITHOUT_UI" -> Intent(activity, NfcTransparentActivity::class.java).also {
                 it.putExtra(
                     NfcTransparentActivity.KEY_EXTRA_INFO_NFC, json.toString()
                 )
-            }
+            } to NFC_NO_GUIDE_REQUEST_CODE
             else -> {
                 result.notImplemented()
                 null
             }
         }
-        intent?.let { activity.startActivityForResult(it, NFC_REQUEST_CODE) }
+        intent?.let { activity.startActivityForResult(it, requestCode ?: NFC_REQUEST_CODE) }
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
@@ -293,6 +293,7 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
                             putSafe(KeyResultConstantsNFC.STATUS_CHIP_AUTHENTICATION, checkAuthChipResult)
                         }.toString()
                     )
+                    result = null
                 }
             }
         }
@@ -316,6 +317,7 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
                             putSafe(KeyResultConstantsNFC.STATUS_CHIP_AUTHENTICATION, resultObj.statusChipAuthentication)
                         }.toString()
                     )
+                    result = null
                 }
             }
         }
@@ -517,18 +519,18 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
    }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-        activity = binding.activity
+        this.binding = binding
         binding.addActivityResultListener(resultActivityListener)
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
-        activity = null
     }
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
     }
 
     override fun onDetachedFromActivity() {
-        activity = null
+        binding?.removeActivityResultListener(resultActivityListener)
+        binding = null
     }
 }

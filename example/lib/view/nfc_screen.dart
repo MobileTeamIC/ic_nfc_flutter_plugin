@@ -26,14 +26,13 @@ class _NfcScreenState extends State<NfcScreen> {
   /// ----------------------------
   /// CONFIG
   /// ----------------------------
-  ICNfcLanguage get _language => SharedPreferenceService.instance.getBool(
-        SharedPreferenceKeys.isViLanguageMode,
-        defaultValue: true,
-      )
+  ICNfcLanguage get _language =>
+      SharedPreferenceService.instance.getBool(
+            SharedPreferenceKeys.isViLanguageMode,
+            defaultValue: true,
+          )
           ? ICNfcLanguage.icnfc_vi
           : ICNfcLanguage.icnfc_en;
-
-  
 
   /// ----------------------------
   /// COMMON CALL NFC
@@ -51,9 +50,15 @@ class _NfcScreenState extends State<NfcScreen> {
   }
 
   void loadData() {
-    _idCtrl.text = SharedPreferenceService.instance.getString(SharedPreferenceKeys.idNumber);
-    _dobCtrl.text = SharedPreferenceService.instance.getString(SharedPreferenceKeys.birthday);
-    _expCtrl.text = SharedPreferenceService.instance.getString(SharedPreferenceKeys.expiredDate);
+    _idCtrl.text = SharedPreferenceService.instance.getString(
+      SharedPreferenceKeys.idNumber,
+    );
+    _dobCtrl.text = SharedPreferenceService.instance.getString(
+      SharedPreferenceKeys.birthday,
+    );
+    _expCtrl.text = SharedPreferenceService.instance.getString(
+      SharedPreferenceKeys.expiredDate,
+    );
   }
 
   /// ----------------------------
@@ -81,9 +86,7 @@ class _NfcScreenState extends State<NfcScreen> {
       return false;
     }
     if (id.length != 12 || dob.length != 6 || exp.length != 6) {
-      _showError(
-        'Định dạng sai: số thẻ 12 số, ngày sinh/hết hạn YYMMDD',
-      );
+      _showError('Định dạng sai: số thẻ 12 số, ngày sinh/hết hạn YYMMDD');
       return false;
     }
     return true;
@@ -93,85 +96,196 @@ class _NfcScreenState extends State<NfcScreen> {
   /// API WRAPPERS
   /// ----------------------------
   Future<Map<String, dynamic>> _qrToNfc() {
-    SharedPreferenceService.instance.setString(SharedPreferenceKeys.idNumber, _idCtrl.text.trim());
-    SharedPreferenceService.instance.setString(SharedPreferenceKeys.birthday, _dobCtrl.text.trim());
-    SharedPreferenceService.instance.setString(SharedPreferenceKeys.expiredDate, _expCtrl.text.trim());
-    return _callNfcApi(() {
-      return ICNfc.instance.qrToNfcSimple(
-        accessToken: SharedPreferenceService.instance.getString(SharedPreferenceKeys.accessToken),
-        tokenId: SharedPreferenceService.instance.getString(SharedPreferenceKeys.tokenId),
-        tokenKey: SharedPreferenceService.instance.getString(SharedPreferenceKeys.tokenKey),
-        accessTokenEKYC: SharedPreferenceService.instance.getString(SharedPreferenceKeys.accessTokenEKYC),
-        tokenIdEKYC: SharedPreferenceService.instance.getString(SharedPreferenceKeys.tokenIdEKYC),
-        tokenKeyEKYC: SharedPreferenceService.instance.getString(SharedPreferenceKeys.tokenKeyEKYC),
-        baseUrl: SharedPreferenceService.instance.getString(SharedPreferenceKeys.baseUrl),
-        languageSdk: _language,
+    try {
+      SharedPreferenceService.instance.setString(
+        SharedPreferenceKeys.idNumber,
+        _idCtrl.text.trim(),
       );
-    });
+      SharedPreferenceService.instance.setString(
+        SharedPreferenceKeys.birthday,
+        _dobCtrl.text.trim(),
+      );
+      SharedPreferenceService.instance.setString(
+        SharedPreferenceKeys.expiredDate,
+        _expCtrl.text.trim(),
+      );
+      return _callNfcApi(() {
+        return ICNfc.instance.qrToNfcSimple(
+          accessToken: SharedPreferenceService.instance.getString(
+            SharedPreferenceKeys.accessToken,
+          ),
+          tokenId: SharedPreferenceService.instance.getString(
+            SharedPreferenceKeys.tokenId,
+          ),
+          tokenKey: SharedPreferenceService.instance.getString(
+            SharedPreferenceKeys.tokenKey,
+          ),
+          accessTokenEKYC: SharedPreferenceService.instance.getString(
+            SharedPreferenceKeys.accessTokenEKYC,
+          ),
+          tokenIdEKYC: SharedPreferenceService.instance.getString(
+            SharedPreferenceKeys.tokenIdEKYC,
+          ),
+          tokenKeyEKYC: SharedPreferenceService.instance.getString(
+            SharedPreferenceKeys.tokenKeyEKYC,
+          ),
+          baseUrl: SharedPreferenceService.instance.getString(
+            SharedPreferenceKeys.baseUrl,
+          ),
+          languageSdk: _language,
+        );
+      });
+    } catch (e) {
+      _showError(e.toString());
+      return Future.value({});
+    }
   }
 
   Future<Map<String, dynamic>> _mrzToNfc() {
-    SharedPreferenceService.instance.setString(SharedPreferenceKeys.idNumber, _idCtrl.text.trim());
-    SharedPreferenceService.instance.setString(SharedPreferenceKeys.birthday, _dobCtrl.text.trim());
-    SharedPreferenceService.instance.setString(SharedPreferenceKeys.expiredDate, _expCtrl.text.trim());
-    return _callNfcApi(() {
-      return ICNfc.instance.mrzToNfcSimple(
-        accessToken: SharedPreferenceService.instance.getString(SharedPreferenceKeys.accessToken),
-        tokenId: SharedPreferenceService.instance.getString(SharedPreferenceKeys.tokenId),
-        tokenKey: SharedPreferenceService.instance.getString(SharedPreferenceKeys.tokenKey),
-        accessTokenEKYC: SharedPreferenceService.instance.getString(SharedPreferenceKeys.accessTokenEKYC),
-        tokenIdEKYC: SharedPreferenceService.instance.getString(SharedPreferenceKeys.tokenIdEKYC),
-        tokenKeyEKYC: SharedPreferenceService.instance.getString(SharedPreferenceKeys.tokenKeyEKYC),
-        baseUrl: SharedPreferenceService.instance.getString(SharedPreferenceKeys.baseUrl),
-        languageSdk: _language,
+    try {
+      SharedPreferenceService.instance.setString(
+        SharedPreferenceKeys.idNumber,
+        _idCtrl.text.trim(),
       );
-    });
+      SharedPreferenceService.instance.setString(
+        SharedPreferenceKeys.birthday,
+        _dobCtrl.text.trim(),
+      );
+      SharedPreferenceService.instance.setString(
+        SharedPreferenceKeys.expiredDate,
+        _expCtrl.text.trim(),
+      );
+      return _callNfcApi(() {
+        return ICNfc.instance.mrzToNfcSimple(
+          accessToken: SharedPreferenceService.instance.getString(
+            SharedPreferenceKeys.accessToken,
+          ),
+          tokenId: SharedPreferenceService.instance.getString(
+            SharedPreferenceKeys.tokenId,
+          ),
+          tokenKey: SharedPreferenceService.instance.getString(
+            SharedPreferenceKeys.tokenKey,
+          ),
+          accessTokenEKYC: SharedPreferenceService.instance.getString(
+            SharedPreferenceKeys.accessTokenEKYC,
+          ),
+          tokenIdEKYC: SharedPreferenceService.instance.getString(
+            SharedPreferenceKeys.tokenIdEKYC,
+          ),
+          tokenKeyEKYC: SharedPreferenceService.instance.getString(
+            SharedPreferenceKeys.tokenKeyEKYC,
+          ),
+          baseUrl: SharedPreferenceService.instance.getString(
+            SharedPreferenceKeys.baseUrl,
+          ),
+          languageSdk: _language,
+        );
+      });
+    } catch (e) {
+      _showError(e.toString());
+      return Future.value({});
+    }
   }
 
   Future<Map<String, dynamic>> _nfcWithUi() {
-    SharedPreferenceService.instance.setString(SharedPreferenceKeys.idNumber, _idCtrl.text.trim());
-    SharedPreferenceService.instance.setString(SharedPreferenceKeys.birthday, _dobCtrl.text.trim());
-    SharedPreferenceService.instance.setString(SharedPreferenceKeys.expiredDate, _expCtrl.text.trim());
-    if (!_validateInputs()) return Future.value({});
-    return _callNfcApi(() {
-      return ICNfc.instance.onlyNfcWithUiSimple(
-        idNumber: _idCtrl.text.trim(),
-        birthday: _dobCtrl.text.trim(),
-        expiredDate: _expCtrl.text.trim(),
-        accessToken: SharedPreferenceService.instance.getString(SharedPreferenceKeys.accessToken),
-        tokenId: SharedPreferenceService.instance.getString(SharedPreferenceKeys.tokenId),
-        tokenKey: SharedPreferenceService.instance.getString(SharedPreferenceKeys.tokenKey),
-        accessTokenEKYC: SharedPreferenceService.instance.getString(SharedPreferenceKeys.accessTokenEKYC),
-        tokenIdEKYC: SharedPreferenceService.instance.getString(SharedPreferenceKeys.tokenIdEKYC),
-        tokenKeyEKYC: SharedPreferenceService.instance.getString(SharedPreferenceKeys.tokenKeyEKYC),
-        baseUrl: SharedPreferenceService.instance.getString(SharedPreferenceKeys.baseUrl),
-        languageSdk: _language,
+    try {
+      SharedPreferenceService.instance.setString(
+        SharedPreferenceKeys.idNumber,
+        _idCtrl.text.trim(),
       );
-    });
+      SharedPreferenceService.instance.setString(
+        SharedPreferenceKeys.birthday,
+        _dobCtrl.text.trim(),
+      );
+      SharedPreferenceService.instance.setString(
+        SharedPreferenceKeys.expiredDate,
+        _expCtrl.text.trim(),
+      );
+      if (!_validateInputs()) return Future.value({});
+      return _callNfcApi(() {
+        return ICNfc.instance.onlyNfcWithUiSimple(
+          idNumber: _idCtrl.text.trim(),
+          birthday: _dobCtrl.text.trim(),
+          expiredDate: _expCtrl.text.trim(),
+          accessToken: SharedPreferenceService.instance.getString(
+            SharedPreferenceKeys.accessToken,
+          ),
+          tokenId: SharedPreferenceService.instance.getString(
+            SharedPreferenceKeys.tokenId,
+          ),
+          tokenKey: SharedPreferenceService.instance.getString(
+            SharedPreferenceKeys.tokenKey,
+          ),
+          accessTokenEKYC: SharedPreferenceService.instance.getString(
+            SharedPreferenceKeys.accessTokenEKYC,
+          ),
+          tokenIdEKYC: SharedPreferenceService.instance.getString(
+            SharedPreferenceKeys.tokenIdEKYC,
+          ),
+          tokenKeyEKYC: SharedPreferenceService.instance.getString(
+            SharedPreferenceKeys.tokenKeyEKYC,
+          ),
+          baseUrl: SharedPreferenceService.instance.getString(
+            SharedPreferenceKeys.baseUrl,
+          ),
+          languageSdk: _language,
+        );
+      });
+    } catch (e) {
+      _showError(e.toString());
+      return Future.value({});
+    }
   }
 
   Future<Map<String, dynamic>> _nfcWithoutUi() {
-    SharedPreferenceService.instance.setString(SharedPreferenceKeys.idNumber, _idCtrl.text.trim());
-    SharedPreferenceService.instance.setString(SharedPreferenceKeys.birthday, _dobCtrl.text.trim());
-    SharedPreferenceService.instance.setString(SharedPreferenceKeys.expiredDate, _expCtrl.text.trim());
-    if (!_validateInputs()) return Future.value({});
-    return _callNfcApi(() {
-      return ICNfc.instance.onlyNfcWithoutUiSimple(
-        idNumber: _idCtrl.text.trim(),
-        birthday: _dobCtrl.text.trim(),
-        expiredDate: _expCtrl.text.trim(),
-        accessToken: SharedPreferenceService.instance.getString(SharedPreferenceKeys.accessToken),
-        tokenId: SharedPreferenceService.instance.getString(SharedPreferenceKeys.tokenId),
-        tokenKey: SharedPreferenceService.instance.getString(SharedPreferenceKeys.tokenKey),
-        accessTokenEKYC: SharedPreferenceService.instance.getString(SharedPreferenceKeys.accessTokenEKYC),
-        tokenIdEKYC: SharedPreferenceService.instance.getString(SharedPreferenceKeys.tokenIdEKYC),
-        tokenKeyEKYC: SharedPreferenceService.instance.getString(SharedPreferenceKeys.tokenKeyEKYC),
-        baseUrl: SharedPreferenceService.instance.getString(SharedPreferenceKeys.baseUrl),
-        languageSdk: _language,
+    try {
+      SharedPreferenceService.instance.setString(
+        SharedPreferenceKeys.idNumber,
+        _idCtrl.text.trim(),
       );
-    });
+      SharedPreferenceService.instance.setString(
+        SharedPreferenceKeys.birthday,
+        _dobCtrl.text.trim(),
+      );
+      SharedPreferenceService.instance.setString(
+        SharedPreferenceKeys.expiredDate,
+        _expCtrl.text.trim(),
+      );
+      if (!_validateInputs()) return Future.value({});
+      return _callNfcApi(() {
+        return ICNfc.instance.onlyNfcWithoutUiSimple(
+          idNumber: _idCtrl.text.trim(),
+          birthday: _dobCtrl.text.trim(),
+          expiredDate: _expCtrl.text.trim(),
+          accessToken: SharedPreferenceService.instance.getString(
+            SharedPreferenceKeys.accessToken,
+          ),
+          tokenId: SharedPreferenceService.instance.getString(
+            SharedPreferenceKeys.tokenId,
+          ),
+          tokenKey: SharedPreferenceService.instance.getString(
+            SharedPreferenceKeys.tokenKey,
+          ),
+          accessTokenEKYC: SharedPreferenceService.instance.getString(
+            SharedPreferenceKeys.accessTokenEKYC,
+          ),
+          tokenIdEKYC: SharedPreferenceService.instance.getString(
+            SharedPreferenceKeys.tokenIdEKYC,
+          ),
+          tokenKeyEKYC: SharedPreferenceService.instance.getString(
+            SharedPreferenceKeys.tokenKeyEKYC,
+          ),
+          baseUrl: SharedPreferenceService.instance.getString(
+            SharedPreferenceKeys.baseUrl,
+          ),
+          languageSdk: _language,
+        );
+      });
+    } catch (e) {
+      _showError(e.toString());
+      return Future.value({});
+    }
   }
-
 
   /// ----------------------------
   /// ERROR UI
@@ -251,22 +365,23 @@ class _NfcScreenState extends State<NfcScreen> {
 class _InputField extends StatelessWidget {
   final String label;
   final TextEditingController controller;
-  const _InputField({
-    required this.label,
-    required this.controller,
-  });
+  const _InputField({required this.label, required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(children: [
-          Icon(Icons.info_outline,
-              color: Theme.of(context).colorScheme.primary),
-          const SizedBox(width: 8),
-          Text(label, style: Theme.of(context).textTheme.titleMedium),
-        ]),
+        Row(
+          children: [
+            Icon(
+              Icons.info_outline,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            const SizedBox(width: 8),
+            Text(label, style: Theme.of(context).textTheme.titleMedium),
+          ],
+        ),
         const SizedBox(height: 8),
         TextField(
           controller: controller,
@@ -313,18 +428,19 @@ class _ActionCard extends StatelessWidget {
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(title, style: theme.textTheme.titleMedium),
-                      const SizedBox(height: 4),
-                      Text(description,
-                          style: theme.textTheme.bodySmall),
-                    ]),
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, style: theme.textTheme.titleMedium),
+                    const SizedBox(height: 4),
+                    Text(description, style: theme.textTheme.bodySmall),
+                  ],
+                ),
               ),
-              Icon(Icons.arrow_forward_ios,
-                  size: 16,
-                  color:
-                      theme.colorScheme.onSurface.withValues(alpha: 0.4)),
+              Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+              ),
             ],
           ),
         ),
