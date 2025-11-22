@@ -28,10 +28,10 @@ import kotlin.jvm.java
 class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     companion object {
         private const val CHANNEL = "flutter.sdk.ic.nfc/integrate"
-        private const val NFC_REQUEST_CODE = 200
+        private const val NFC_REQUEST_CODE = 11021
         const val NFC_RESULT = "nfc_result"
-        const val EKYC_REQUEST_CODE = 100
-        const val NFC_NO_GUIDE_REQUEST_CODE = 201
+        const val EKYC_REQUEST_CODE = 11022
+        const val NFC_NO_GUIDE_REQUEST_CODE = 11023
         const val ERROR_NFC_CODE = "69"
 
         fun navigateToOnlyNFC(ctx: Context, json: JSONObject): Intent {
