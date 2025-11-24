@@ -28,15 +28,14 @@ import kotlin.jvm.java
 class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     companion object {
         private const val CHANNEL = "flutter.sdk.ic.nfc/integrate"
-        private const val NFC_REQUEST_CODE = 100
+        private const val NFC_REQUEST_CODE = 11021
         const val NFC_RESULT = "nfc_result"
-        const val EKYC_REQUEST_CODE = 100
-        const val NFC_NO_GUIDE_REQUEST_CODE = 101
+        const val EKYC_REQUEST_CODE = 11022
+        const val NFC_NO_GUIDE_REQUEST_CODE = 11023
         const val ERROR_NFC_CODE = "69"
 
         fun navigateToOnlyNFC(ctx: Context, json: JSONObject): Intent {
             return Intent(ctx, VnptScanNFCActivity::class.java).also {
-
                 /**
                  * Truyền access token chứa bearer
                  */
@@ -151,7 +150,7 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
     // when the Flutter Engine is detached from the Activity
     private lateinit var channel: MethodChannel
     private var result: Result? = null
-    private var activity: Activity? = null
+    private var binding: ActivityPluginBinding? = null
 
      // Hàm helper để chuyển JSONObject thành Map
     fun toMap(jsonObject: JSONObject): Map<String, Any> {
@@ -183,6 +182,55 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
         return list
     }
 
+    // Hàm helper để parse JSON string thành Map hoặc trả về null nếu không phải JSON hợp lệ
+    private fun parseJsonStringToMap(jsonString: String?): Any? {
+        if (jsonString.isNullOrBlank()) return null
+        return try {
+            val jsonObject = JSONObject(jsonString)
+            toMap(jsonObject)
+        } catch (e: Exception) {
+            // Nếu không phải JSONObject, thử parse như JSONArray
+            try {
+                val jsonArray = JSONArray(jsonString)
+                toList(jsonArray)
+            } catch (e2: Exception) {
+                // Nếu không phải JSON hợp lệ, trả về string gốc
+                jsonString
+            }
+        }
+    }
+
+    // Hàm helper để put postcode value vào JSONObject (parse JSON string thành Map nếu cần)
+    private fun JSONObject.putResult(key: String, jsonString: String?) {
+        if (jsonString.isNullOrBlank()) return
+        
+        val parsedValue = parseJsonStringToMap(jsonString)
+        when (parsedValue) {
+            is Map<*, *> -> {
+                // Nếu là Map, chuyển thành JSONObject
+                try {
+                    put(key, JSONObject(parsedValue as Map<String, Any>))
+                } catch (e: Exception) {
+                    // Nếu chuyển đổi thất bại, giữ nguyên string
+                    putSafe(key, jsonString)
+                }
+            }
+            is List<*> -> {
+                // Nếu là List, chuyển thành JSONArray
+                try {
+                    put(key, JSONArray(parsedValue as List<Any>))
+                } catch (e: Exception) {
+                    // Nếu chuyển đổi thất bại, giữ nguyên string
+                    putSafe(key, jsonString)
+                }
+            }
+            else -> {
+                // Nếu không phải Map hoặc List, giữ nguyên string
+                putSafe(key, jsonString)
+            }
+        }
+    }
+
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, CHANNEL)
         channel.setMethodCallHandler(this)
@@ -192,25 +240,37 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
         call: MethodCall,
         result: Result
     ) {
-        val activity = this.activity ?: return
+        val binding = this.binding
+        if (binding == null) {
+            result.error("NO_ACTIVITY", "Activity is not available", null)
+            return
+        }
+        
+        if (this.result != null) {
+            result.error("ALREADY_ACTIVE", "A request is already being processed", null)
+            return
+        }
+        
+        val activity = binding.activity
         this.result = result
 
         val json = parseJsonFromArgs(call)
-        val intent = when (call.method) {
-            "NFC_QR_CODE" -> navigateToNfcQrCode(activity, json)
-            "NFC_MRZ_CODE" -> navigateTo_MRZ_NFC(activity, json)
-            "NFC_ONLY_UI" -> navigateToOnlyNFC(activity, json)
+        val (intent, requestCode) = when (call.method) {
+            "NFC_QR_CODE" -> navigateToNfcQrCode(activity, json) to NFC_REQUEST_CODE
+            "NFC_MRZ_CODE" -> navigateTo_MRZ_NFC(activity, json) to NFC_REQUEST_CODE
+            "NFC_ONLY_UI" -> navigateToOnlyNFC(activity, json) to NFC_REQUEST_CODE
             "NFC_ONLY_WITHOUT_UI" -> Intent(activity, NfcTransparentActivity::class.java).also {
                 it.putExtra(
                     NfcTransparentActivity.KEY_EXTRA_INFO_NFC, json.toString()
                 )
-            }
+            } to NFC_NO_GUIDE_REQUEST_CODE
             else -> {
+                this.result = null
                 result.notImplemented()
-                null
+                null to null
             }
         }
-        intent?.let { activity.startActivityForResult(it, NFC_REQUEST_CODE) }
+        intent?.let { activity.startActivityForResult(it, requestCode ?: NFC_REQUEST_CODE) }
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
@@ -219,103 +279,109 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
 
     private val resultActivityListener = PluginRegistry.ActivityResultListener { requestCode, resultCode, data ->
         if (requestCode == NFC_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                if (data != null) {
-                    println("FlutterPluginIcNfcPlugin: Nhận kết quả thành công")
-                    var dataGroupResult = data.getStringExtra(KeyResultConstantsNFC.DATA_GROUPS_RESULT)
-                    /**
-                     * đường dẫn ảnh mặt trước trong thẻ chip lưu trong cache
-                     * [KeyResultConstantsNFC.PATH_IMAGE_AVATAR]
-                     */
-                    val avatarPath = data.getStringExtra(KeyResultConstantsNFC.PATH_IMAGE_AVATAR)
+            val pendingResult = this.result
+            this.result = null
+            
+            if (pendingResult != null) {
+                if (resultCode == RESULT_OK) {
+                    if (data != null) {
+                        println("FlutterPluginIcNfcPlugin: Nhận kết quả thành công")
+                        var dataGroupResult = data.getStringExtra(KeyResultConstantsNFC.DATA_GROUPS_RESULT)
+                        /**
+                         * đường dẫn ảnh mặt trước trong thẻ chip lưu trong cache
+                         * [KeyResultConstantsNFC.PATH_IMAGE_AVATAR]
+                         */
+                        val avatarPath = data.getStringExtra(KeyResultConstantsNFC.PATH_IMAGE_AVATAR)
 
-                    /**
-                     * chuỗi thông tin cua SDK
-                     * [KeyResultConstantsNFC.CLIENT_SESSION_RESULT]
-                     */
-                    val clientSession =
-                        data.getStringExtra(KeyResultConstantsNFC.CLIENT_SESSION_RESULT)
+                        /**
+                         * chuỗi thông tin cua SDK
+                         * [KeyResultConstantsNFC.CLIENT_SESSION_RESULT]
+                         */
+                        val clientSession =
+                            data.getStringExtra(KeyResultConstantsNFC.CLIENT_SESSION_RESULT)
 
-                    /**
-                     * kết quả NFC
-                     * [KeyResultConstantsNFC.DATA_NFC_RESULT]
-                     */
-                    val dataNfcResult = data.getStringExtra(KeyResultConstantsNFC.DATA_NFC_RESULT)
+                        /**
+                         * kết quả NFC
+                         * [KeyResultConstantsNFC.DATA_NFC_RESULT]
+                         */
+                        val dataNfcResult = data.getStringExtra(KeyResultConstantsNFC.DATA_NFC_RESULT)
 
-                    /**
-                     * mã hash avatar
-                     * [KeyResultConstantsNFC.HASH_IMAGE_AVATAR]
-                     */
-                    val hashAvatar = data.getStringExtra(KeyResultConstantsNFC.HASH_IMAGE_AVATAR)
+                        /**
+                         * mã hash avatar
+                         * [KeyResultConstantsNFC.HASH_IMAGE_AVATAR]
+                         */
+                        val hashAvatar = data.getStringExtra(KeyResultConstantsNFC.HASH_IMAGE_AVATAR)
 
-                    /**
-                     * chuỗi json string chứa thông tin post code của quê quán
-                     * [KeyResultConstantsNFC.POST_CODE_ORIGINAL_LOCATION_RESULT]
-                     */
-                    val postCodeOriginalLocation =
-                        data.getStringExtra(KeyResultConstantsNFC.POST_CODE_ORIGINAL_LOCATION_RESULT)
+                        /**
+                         * chuỗi json string chứa thông tin post code của quê quán
+                         * [KeyResultConstantsNFC.POST_CODE_ORIGINAL_LOCATION_RESULT]
+                         */
+                        val postCodeOriginalLocation =
+                            data.getStringExtra(KeyResultConstantsNFC.POST_CODE_ORIGINAL_LOCATION_RESULT)
 
-                    /**
-                     * chuỗi json string chứa thông tin post code của nơi thường trú
-                     * [KeyResultConstantsNFC.POST_CODE_RECENT_LOCATION_RESULT]
-                     */
-                    val postCodeRecentLocation =
-                        data.getStringExtra(KeyResultConstantsNFC.POST_CODE_RECENT_LOCATION_RESULT)
+                        /**
+                         * chuỗi json string chứa thông tin post code của nơi thường trú
+                         * [KeyResultConstantsNFC.POST_CODE_RECENT_LOCATION_RESULT]
+                         */
+                        val postCodeRecentLocation =
+                            data.getStringExtra(KeyResultConstantsNFC.POST_CODE_RECENT_LOCATION_RESULT)
 
-                    /**
-                     * kết quả check chip căn cước công dân
-                     * [KeyResultConstantsNFC.CHECK_AUTH_CHIP_RESULT]
-                     */
-                    val checkAuthChipResult =
-                        data.getStringExtra(KeyResultConstantsNFC.STATUS_CHIP_AUTHENTICATION)
+                        /**
+                         * kết quả check chip căn cước công dân
+                         * [KeyResultConstantsNFC.CHECK_AUTH_CHIP_RESULT]
+                         */
+                        val checkAuthChipResult =
+                            data.getStringExtra(KeyResultConstantsNFC.STATUS_CHIP_AUTHENTICATION)
 
-                    /**
-                     * kết quả quét QRCode căn cước công dân
-                     * [KeyResultConstantsNFC.QR_CODE_RESULT_NFC]
-                     */
-                    val qrCodeResult = data.getStringExtra(KeyResultConstantsNFC.QR_CODE_RESULT)
+                        /**
+                         * kết quả quét QRCode căn cước công dân
+                         * [KeyResultConstantsNFC.QR_CODE_RESULT_NFC]
+                         */
+                        val qrCodeResult = data.getStringExtra(KeyResultConstantsNFC.QR_CODE_RESULT)
 
-                    result?.success(
-                        JSONObject().apply {
-                            putSafe(KeyResultConstantsNFC.DATA_GROUPS_RESULT, dataGroupResult)
-                            putSafe(KeyResultConstantsNFC.PATH_IMAGE_AVATAR, avatarPath)
-                            putSafe(KeyResultConstantsNFC.CLIENT_SESSION_RESULT, clientSession)
-                            putSafe(KeyResultConstantsNFC.DATA_NFC_RESULT, dataNfcResult)
-                            putSafe(KeyResultConstantsNFC.HASH_IMAGE_AVATAR, hashAvatar)
-                            putSafe(
-                                KeyResultConstantsNFC.POST_CODE_ORIGINAL_LOCATION_RESULT,
-                                postCodeOriginalLocation
-                            )
-                            putSafe(
-                                KeyResultConstantsNFC.POST_CODE_RECENT_LOCATION_RESULT,
-                                postCodeRecentLocation
-                            )
-                            putSafe(KeyResultConstantsNFC.STATUS_CHIP_AUTHENTICATION, checkAuthChipResult)
-                        }.toString()
-                    )
+                        pendingResult.success(
+                            JSONObject().apply {
+                                putResult(KeyResultConstantsNFC.DATA_GROUPS_RESULT, dataGroupResult)
+                                putResult(KeyResultConstantsNFC.PATH_IMAGE_AVATAR, avatarPath)
+                                putResult(KeyResultConstantsNFC.CLIENT_SESSION_RESULT, clientSession)
+                                putResult(KeyResultConstantsNFC.DATA_NFC_RESULT, dataNfcResult)
+                                putResult(KeyResultConstantsNFC.HASH_IMAGE_AVATAR, hashAvatar)
+                                putResult(KeyResultConstantsNFC.POST_CODE_ORIGINAL_LOCATION_RESULT, postCodeOriginalLocation)
+                                putResult(KeyResultConstantsNFC.POST_CODE_RECENT_LOCATION_RESULT, postCodeRecentLocation)
+                                putResult(KeyResultConstantsNFC.STATUS_CHIP_AUTHENTICATION, checkAuthChipResult)
+                            }.toString()
+                        )
+                    } else {
+                        pendingResult.success(JSONObject().toString())
+                    }
+                } else {
+                    pendingResult.error("CANCELED", "User canceled the operation", null)
                 }
             }
         }
         else if (requestCode == NFC_NO_GUIDE_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                data?.let {
-                    val resultStr = it.getStringExtra(NFC_RESULT)
-                    val resultObj = Gson().fromJson(resultStr, NfcResult::class.java)
-                    result?.success(
-                        JSONObject().apply {
-                            putSafe(KeyResultConstantsNFC.CLIENT_SESSION_RESULT, resultObj.clientSessionNfc)
-                            putSafe(KeyResultConstantsNFC.DATA_NFC_RESULT, resultObj.logNfcResult)
-                            putSafe(
-                                KeyResultConstantsNFC.POST_CODE_ORIGINAL_LOCATION_RESULT,
-                                resultObj.postCodeOriginalLocationResult
-                            )
-                            putSafe(
-                                KeyResultConstantsNFC.POST_CODE_RECENT_LOCATION_RESULT,
-                                resultObj.postCodeRecentLocationResult
-                            )
-                            putSafe(KeyResultConstantsNFC.STATUS_CHIP_AUTHENTICATION, resultObj.statusChipAuthentication)
-                        }.toString()
-                    )
+            val pendingResult = this.result
+            this.result = null
+            
+            if (pendingResult != null) {
+                if (resultCode == RESULT_OK) {
+                    data?.let {
+                        val resultStr = it.getStringExtra(NFC_RESULT)
+                        val resultObj = Gson().fromJson(resultStr, NfcResult::class.java)
+                        pendingResult.success(
+                            JSONObject().apply {
+                                putResult(KeyResultConstantsNFC.CLIENT_SESSION_RESULT, resultObj.clientSessionNfc)
+                                putResult(KeyResultConstantsNFC.DATA_NFC_RESULT, resultObj.logNfcResult)
+                                putResult(KeyResultConstantsNFC.POST_CODE_ORIGINAL_LOCATION_RESULT, resultObj.postCodeOriginalLocationResult)
+                                putResult(KeyResultConstantsNFC.POST_CODE_RECENT_LOCATION_RESULT, resultObj.postCodeRecentLocationResult)
+                                putResult(KeyResultConstantsNFC.STATUS_CHIP_AUTHENTICATION, resultObj.statusChipAuthentication)
+                            }.toString()
+                        )
+                    } ?: run {
+                        pendingResult.success(JSONObject().toString())
+                    }
+                } else {
+                    pendingResult.error("CANCELED", "User canceled the operation", null)
                 }
             }
         }
@@ -517,18 +583,18 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
    }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-        activity = binding.activity
+        this.binding = binding
         binding.addActivityResultListener(resultActivityListener)
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
-        activity = null
     }
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
     }
 
     override fun onDetachedFromActivity() {
-        activity = null
+        binding?.removeActivityResultListener(resultActivityListener)
+        binding = null
     }
 }
