@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_plugin_ic_nfc/nfc/nfc.dart';
 import 'package:flutter_plugin_ic_nfc/nfc/services/enum_nfc.dart';
+import 'package:flutter_plugin_ic_nfc/nfc/services/nfc_presentation.dart';
 import 'package:flutter_plugin_ic_nfc_example/service/shared_preference.dart';
 import 'package:flutter_plugin_ic_nfc_example/view/log_screen.dart';
 
@@ -95,7 +96,7 @@ class _NfcScreenState extends State<NfcScreen> {
   /// ----------------------------
   /// API WRAPPERS
   /// ----------------------------
-  Future<Map<String, dynamic>> _qrToNfc() {
+  Future<void> _qrToNfc() async {
     try {
       SharedPreferenceService.instance.setString(
         SharedPreferenceKeys.idNumber,
@@ -109,9 +110,9 @@ class _NfcScreenState extends State<NfcScreen> {
         SharedPreferenceKeys.expiredDate,
         _expCtrl.text.trim(),
       );
-      return _callNfcApi(() {
-        return ICNfc.instance.qrToNfcSimple(
-          accessToken: SharedPreferenceService.instance.getString(
+
+      final config = NfcPresets.qrToNfc(
+        accessToken: SharedPreferenceService.instance.getString(
             SharedPreferenceKeys.accessToken,
           ),
           tokenId: SharedPreferenceService.instance.getString(
@@ -133,15 +134,16 @@ class _NfcScreenState extends State<NfcScreen> {
             SharedPreferenceKeys.baseUrl,
           ),
           languageSdk: _language,
+          modeButtonHeaderBar: ModeButtonHeaderBar.rightButton,
+          isShowLogo: false,
         );
-      });
-    } catch (e) {
+     _navigate(await ICNfc.instance.qrToNfc(config));
+    } on PlatformException catch (e) {
       _showError(e.toString());
-      return Future.value({});
     }
   }
 
-  Future<Map<String, dynamic>> _mrzToNfc() {
+  Future<void> _mrzToNfc() async {
     try {
       SharedPreferenceService.instance.setString(
         SharedPreferenceKeys.idNumber,
@@ -155,9 +157,9 @@ class _NfcScreenState extends State<NfcScreen> {
         SharedPreferenceKeys.expiredDate,
         _expCtrl.text.trim(),
       );
-      return _callNfcApi(() {
-        return ICNfc.instance.mrzToNfcSimple(
-          accessToken: SharedPreferenceService.instance.getString(
+
+      final config = NfcPresets.mrzToNfc(
+        accessToken: SharedPreferenceService.instance.getString(
             SharedPreferenceKeys.accessToken,
           ),
           tokenId: SharedPreferenceService.instance.getString(
@@ -179,15 +181,17 @@ class _NfcScreenState extends State<NfcScreen> {
             SharedPreferenceKeys.baseUrl,
           ),
           languageSdk: _language,
-        );
-      });
-    } catch (e) {
-      _showError(e.toString());
-      return Future.value({});
+          modeButtonHeaderBar: ModeButtonHeaderBar.rightButton,
+          isShowLogo: false,
+      );
+
+     _navigate(await ICNfc.instance.mrzToNfc(config));
+    } on PlatformException catch (e) {
+      _showError("${e.code} - ${e.message}");
     }
   }
 
-  Future<Map<String, dynamic>> _nfcWithUi() {
+  Future<void> _nfcWithUi() async {
     try {
       SharedPreferenceService.instance.setString(
         SharedPreferenceKeys.idNumber,
@@ -202,12 +206,12 @@ class _NfcScreenState extends State<NfcScreen> {
         _expCtrl.text.trim(),
       );
       if (!_validateInputs()) return Future.value({});
-      return _callNfcApi(() {
-        return ICNfc.instance.onlyNfcWithUiSimple(
-          idNumber: _idCtrl.text.trim(),
-          birthday: _dobCtrl.text.trim(),
-          expiredDate: _expCtrl.text.trim(),
-          accessToken: SharedPreferenceService.instance.getString(
+
+       final config = NfcPresets.manualWithUi(
+        idNumber: _idCtrl.text.trim(),
+        birthday: _dobCtrl.text.trim(),
+        expiredDate: _expCtrl.text.trim(),
+        accessToken: SharedPreferenceService.instance.getString(
             SharedPreferenceKeys.accessToken,
           ),
           tokenId: SharedPreferenceService.instance.getString(
@@ -229,15 +233,16 @@ class _NfcScreenState extends State<NfcScreen> {
             SharedPreferenceKeys.baseUrl,
           ),
           languageSdk: _language,
-        );
-      });
-    } catch (e) {
-      _showError(e.toString());
-      return Future.value({});
+          modeButtonHeaderBar: ModeButtonHeaderBar.rightButton,
+          isShowLogo: false,
+      );
+     _navigate(await ICNfc.instance.onlyNfcWithUi(config));
+    } on PlatformException catch (e) {
+      _showError("${e.code} - ${e.message}");
     }
   }
 
-  Future<Map<String, dynamic>> _nfcWithoutUi() {
+  Future<void> _nfcWithoutUi() async {
     try {
       SharedPreferenceService.instance.setString(
         SharedPreferenceKeys.idNumber,
@@ -251,13 +256,12 @@ class _NfcScreenState extends State<NfcScreen> {
         SharedPreferenceKeys.expiredDate,
         _expCtrl.text.trim(),
       );
-      if (!_validateInputs()) return Future.value({});
-      return _callNfcApi(() {
-        return ICNfc.instance.onlyNfcWithoutUiSimple(
-          idNumber: _idCtrl.text.trim(),
-          birthday: _dobCtrl.text.trim(),
-          expiredDate: _expCtrl.text.trim(),
-          accessToken: SharedPreferenceService.instance.getString(
+      if (!_validateInputs()) return;
+        final config = NfcPresets.manualWithoutUi(
+        idNumber: _idCtrl.text.trim(),
+        birthday: _dobCtrl.text.trim(),
+        expiredDate: _expCtrl.text.trim(),
+        accessToken: SharedPreferenceService.instance.getString(
             SharedPreferenceKeys.accessToken,
           ),
           tokenId: SharedPreferenceService.instance.getString(
@@ -279,11 +283,12 @@ class _NfcScreenState extends State<NfcScreen> {
             SharedPreferenceKeys.baseUrl,
           ),
           languageSdk: _language,
-        );
-      });
-    } catch (e) {
-      _showError(e.toString());
-      return Future.value({});
+          modeButtonHeaderBar: ModeButtonHeaderBar.rightButton,
+          isShowLogo: false,
+      );
+     _navigate(await ICNfc.instance.onlyNfcWithoutUi(config));
+    } on PlatformException catch (e) {
+      _showError("${e.code} - ${e.message}");
     }
   }
 
@@ -331,25 +336,25 @@ class _NfcScreenState extends State<NfcScreen> {
                 icon: Icons.qr_code,
                 title: "QR Code NFC Flow",
                 description: "Đọc thông tin từ QR Code rồi vào NFC",
-                onTap: () async => _navigate(await _qrToNfc()),
+                onTap: () async => _qrToNfc(),
               ),
               _ActionCard(
                 icon: Icons.document_scanner,
                 title: "MRZ NFC Flow",
                 description: "Đọc thông tin MRZ rồi vào NFC",
-                onTap: () async => _navigate(await _mrzToNfc()),
+                onTap: () async => _mrzToNfc(),
               ),
               _ActionCard(
                 icon: Icons.nfc,
                 title: "NFC With UI",
                 description: "Đọc thông tin từ NFC với UI SDK",
-                onTap: () async => _navigate(await _nfcWithUi()),
+                onTap: () async => _nfcWithUi(),
               ),
               _ActionCard(
                 icon: Icons.nfc_rounded,
                 title: "NFC Without UI",
                 description: "Đọc NFC trực tiếp trong app",
-                onTap: () async => _navigate(await _nfcWithoutUi()),
+                onTap: () async => _nfcWithoutUi(),
               ),
             ],
           ),

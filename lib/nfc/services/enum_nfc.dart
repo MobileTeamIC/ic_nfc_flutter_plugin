@@ -2,6 +2,7 @@
 enum NfcFlowType { qrToNfc, mrzToNfc, onlyNfcWithUi, onlyNfcWithoutUi }
 
 enum ICNfcLanguage { icnfc_vi, icnfc_en }
+enum ModeButtonHeaderBar { leftButton, rightButton }
 
 extension ICNfcLanguageValue on ICNfcLanguage {
   String get channelValue {

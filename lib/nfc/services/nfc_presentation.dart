@@ -20,9 +20,9 @@ class NfcPresets {
     String tokenIdEKYC = '',
     String tokenKeyEKYC = '',
     String baseUrl = '',
-
+    ModeButtonHeaderBar modeButtonHeaderBar = ModeButtonHeaderBar.leftButton,
+    bool isShowLogo = false,
   }) => ICNfcConfig(
-
     accessToken: accessToken,
     tokenId: tokenId,
     tokenKey: tokenKey,
@@ -39,7 +39,8 @@ class NfcPresets {
     inputClientSession: inputClientSession,
     readingTagsNFC: readingTagsNFC,
     nameVideoHelpNFC: nameVideoHelpNFC,
-
+    modeButtonHeaderBar: modeButtonHeaderBar,
+    isShowLogo: isShowLogo,
   );
 
   /// MRZ -> NFC flow (no manual inputs needed)
@@ -59,6 +60,8 @@ class NfcPresets {
     String inputClientSession = '',
     List<String> readingTagsNFC = const [],
     String nameVideoHelpNFC = '',
+    ModeButtonHeaderBar modeButtonHeaderBar = ModeButtonHeaderBar.leftButton,
+    bool isShowLogo = false,
   }) => ICNfcConfig(
     accessToken: accessToken,
     tokenId: tokenId,
@@ -76,6 +79,8 @@ class NfcPresets {
     inputClientSession: inputClientSession,
     readingTagsNFC: readingTagsNFC,
     nameVideoHelpNFC: nameVideoHelpNFC,
+    modeButtonHeaderBar: modeButtonHeaderBar,
+    isShowLogo: isShowLogo,
   );
 
   /// Manual NFC with SDK UI
@@ -98,6 +103,8 @@ class NfcPresets {
     String inputClientSession = '',
     List<String> readingTagsNFC = const [],
     String nameVideoHelpNFC = '',
+    ModeButtonHeaderBar modeButtonHeaderBar = ModeButtonHeaderBar.leftButton,
+    bool isShowLogo = false,
   }) => ICNfcConfig(
     accessToken: accessToken,
     tokenId: tokenId,
@@ -118,6 +125,8 @@ class NfcPresets {
     inputClientSession: inputClientSession,
     readingTagsNFC: readingTagsNFC,
     nameVideoHelpNFC: nameVideoHelpNFC,
+    modeButtonHeaderBar: modeButtonHeaderBar,
+    isShowLogo: isShowLogo,
   );
 
   /// Manual NFC without SDK UI
@@ -138,6 +147,8 @@ class NfcPresets {
     String inputClientSession = '',
     List<String> readingTagsNFC = const [],
     String nameVideoHelpNFC = '',
+    ModeButtonHeaderBar modeButtonHeaderBar = ModeButtonHeaderBar.leftButton,
+    bool isShowLogo = false,
   }) => ICNfcConfig(
     accessToken: accessToken,
     tokenId: tokenId,
@@ -155,5 +166,7 @@ class NfcPresets {
     inputClientSession: inputClientSession,
     readingTagsNFC: readingTagsNFC,
     nameVideoHelpNFC: nameVideoHelpNFC,
+    modeButtonHeaderBar: modeButtonHeaderBar,
+    isShowLogo: isShowLogo,
   );
 }

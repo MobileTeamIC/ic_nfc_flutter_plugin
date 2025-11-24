@@ -19,6 +19,7 @@ class ICNfcConfig {
   final bool? isShowTutorial;
   final bool? isEnableGotIt;
   final bool? isDisableTutorial;
+  final bool? isShowLogo;
 
   // NFC reader (manual input) requirements
   final String? idNumber; // 12 digits
@@ -47,6 +48,7 @@ class ICNfcConfig {
   final bool? isEnableCheckSimulator;
   final bool? isEnableCheckJailbroken;
   final bool? isAnimatedDismissed;
+  final ModeButtonHeaderBar? modeButtonHeaderBar;
 
   // Environment URLs
   final String? urlUploadImage;
@@ -75,6 +77,7 @@ class ICNfcConfig {
     this.isShowTutorial,
     this.isEnableGotIt,
     this.isDisableTutorial,
+    this.isShowLogo,
     this.idNumber,
     this.birthday,
     this.expiredDate,
@@ -112,6 +115,7 @@ class ICNfcConfig {
     this.transactionPartnerIDRecentLocation,
     this.transactionPartnerIDOriginalLocation,
     this.nameSSLPinning,
+    this.modeButtonHeaderBar,
   });
 
   /// Convert to Map for method channel. Only non-null fields included.
@@ -164,7 +168,9 @@ class ICNfcConfig {
     if (isDisableTutorial != null) {
       map['is_disable_tutorial'] = isDisableTutorial;
     }
-
+    if (isShowLogo != null) {
+      map['is_show_logo'] = isShowLogo;
+    }
     if (readerCardMode != null) {
       map['reader_card_mode'] = readerCardMode!.channelValue;
     }
@@ -267,6 +273,9 @@ class ICNfcConfig {
     if (nameSSLPinning != null) {
       map['name_ssl_pinning'] = nameSSLPinning;
     }
+    if (modeButtonHeaderBar != null) {
+      map['mode_button_header_bar'] = modeButtonHeaderBar!.name;
+    }
     return map;
   }
 
@@ -291,6 +300,7 @@ class ICNfcConfig {
     bool? isShowTutorial,
     bool? isEnableGotIt,
     bool? isDisableTutorial,
+    bool? isShowLogo,
     String? idNumber,
     String? birthday,
     String? expiredDate,
@@ -341,6 +351,7 @@ class ICNfcConfig {
       isShowTutorial: isShowTutorial ?? this.isShowTutorial,
       isEnableGotIt: isEnableGotIt ?? this.isEnableGotIt,
       isDisableTutorial: isDisableTutorial ?? this.isDisableTutorial,
+      isShowLogo: isShowLogo ?? this.isShowLogo,
       idNumber: idNumber ?? this.idNumber,
       birthday: birthday ?? this.birthday,
       expiredDate: expiredDate ?? this.expiredDate,

@@ -7,6 +7,10 @@ object KeyArgumentMethodChannel {
     const val EXPIRED_DATE: String = "expired_date"
     const val LANGUAGE_SDK: String = "language_sdk"
     const val IS_SHOW_TUTORIAL: String = "is_show_tutorial"
+    const val IS_SHOW_LOGO: String = "is_show_logo"
+
+    const val MODE_BUTTON_HEADER_BAR: String = "mode_button_header_bar"
+
     const val IS_DISABLE_TUTORIAL: String = "is_disable_tutorial"
     const val IS_ENABLE_GOT_IT: String = "is_enable_got_it"
     const val READER_CARD_MODE: String = "reader_card_mode"

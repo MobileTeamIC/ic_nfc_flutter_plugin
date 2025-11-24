@@ -123,7 +123,6 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
                  it.putExtra(KeyIntentConstantsNFC.PUBLIC_KEY, json.optString(KeyArgumentMethodChannel.PUBLIC_KEY, ""))
                 it.putExtra(KeyIntentConstantsNFC.IS_ENABLE_ENCRYPT, json.optBoolean(KeyArgumentMethodChannel.IS_ENABLE_ENCRYPT, false))
                 it.putExtra(KeyIntentConstantsNFC.MODE_UPLOAD_FILE, json.optString(KeyArgumentMethodChannel.MODE_UPLOAD_FILE, ""))
-                it.putExtra(KeyIntentConstantsNFC.FLOW_NFC, json.optString(KeyArgumentMethodChannel.FLOW_NFC, ""))
                 it.putExtra(KeyIntentConstantsNFC.NUMBER_TIMES_RETRY_SCAN_NFC, json.optInt(KeyArgumentMethodChannel.NUMBER_TIMES_RETRY_SCAN_NFC, 3))
                 it.putExtra(KeyIntentConstantsNFC.URL_UPLOAD_IMAGE, json.optString(KeyArgumentMethodChannel.URL_UPLOAD_IMAGE, ""))
                 it.putExtra(KeyIntentConstantsNFC.URL_UPLOAD_DATA_NFC, json.optString(KeyArgumentMethodChannel.URL_UPLOAD_DATA_NFC, ""))
@@ -134,6 +133,8 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
                 it.putExtra(KeyIntentConstantsNFC.TRANSACTION_PARTNER_ID_UPLOAD_NFC, json.optString(KeyArgumentMethodChannel.TRANSACTION_PARTNER_ID_UPLOAD_NFC, ""))
                 it.putExtra(KeyIntentConstantsNFC.TRANSACTION_PARTNER_ID_RECENT_LOCATION, json.optString(KeyArgumentMethodChannel.TRANSACTION_PARTNER_ID_RECENT_LOCATION, ""))
                 it.putExtra(KeyIntentConstantsNFC.TRANSACTION_PARTNER_ID_ORIGINAL_LOCATION, json.optString(KeyArgumentMethodChannel.TRANSACTION_PARTNER_ID_ORIGINAL_LOCATION, ""))
+                it.putExtra(KeyIntentConstantsNFC.IS_SHOW_LOGO, json.optBoolean(KeyArgumentMethodChannel.IS_SHOW_LOGO))
+                it.putExtra(KeyIntentConstantsNFC.MODE_BUTTON_HEADER_BAR, mapModeButtonHeaderBar(json.optString("mode_button_header_bar")))
             }
         }
 
@@ -141,6 +142,14 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
             return when (value?.lowercase()) {
                 "icnfc_en" -> SDKEnumNFC.LanguageEnum.ENGLISH
                 else -> SDKEnumNFC.LanguageEnum.VIETNAMESE
+            }
+        }
+
+        private fun mapModeButtonHeaderBar(value: String?): Int {
+            return when (value?.lowercase()) {
+                "rightbutton" -> SDKEnumNFC.ModeButtonHeaderBar.RightButton.value
+                "leftbutton" -> SDKEnumNFC.ModeButtonHeaderBar.LeftButton.value
+                else -> SDKEnumNFC.ModeButtonHeaderBar.LeftButton.value
             }
         }
     }
@@ -283,8 +292,9 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
             this.result = null
             
             if (pendingResult != null) {
+                val lastStep = data?.getStringExtra(KeyResultConstantsNFC.LAST_STEP_NFC)
                 if (resultCode == RESULT_OK) {
-                    if (data != null) {
+                    if (data != null && lastStep == SDKEnumNFC.NfcLastStepEnum.DONE.value) {
                         println("FlutterPluginIcNfcPlugin: Nhận kết quả thành công")
                         var dataGroupResult = data.getStringExtra(KeyResultConstantsNFC.DATA_GROUPS_RESULT)
                         /**
@@ -352,10 +362,10 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
                             }.toString()
                         )
                     } else {
-                        pendingResult.success(JSONObject().toString())
+                        pendingResult.error("CANCELLED", "User canceled the operation", null)
                     }
                 } else {
-                    pendingResult.error("CANCELED", "User canceled the operation", null)
+                    pendingResult.error("CANCELLED", "User canceled the operation", null)
                 }
             }
         }
@@ -477,7 +487,6 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
          it.putExtra(KeyIntentConstantsNFC.PUBLIC_KEY, json.optString(KeyArgumentMethodChannel.PUBLIC_KEY, ""))
          it.putExtra(KeyIntentConstantsNFC.IS_ENABLE_ENCRYPT, json.optBoolean(KeyArgumentMethodChannel.IS_ENABLE_ENCRYPT, false))
          it.putExtra(KeyIntentConstantsNFC.MODE_UPLOAD_FILE, json.optString(KeyArgumentMethodChannel.MODE_UPLOAD_FILE, ""))
-         it.putExtra(KeyIntentConstantsNFC.FLOW_NFC, json.optString(KeyArgumentMethodChannel.FLOW_NFC, ""))
          it.putExtra(KeyIntentConstantsNFC.NUMBER_TIMES_RETRY_SCAN_NFC, json.optInt(KeyArgumentMethodChannel.NUMBER_TIMES_RETRY_SCAN_NFC, 3))
          it.putExtra(KeyIntentConstantsNFC.URL_UPLOAD_IMAGE, json.optString(KeyArgumentMethodChannel.URL_UPLOAD_IMAGE, ""))
          it.putExtra(KeyIntentConstantsNFC.URL_UPLOAD_DATA_NFC, json.optString(KeyArgumentMethodChannel.URL_UPLOAD_DATA_NFC, ""))
@@ -488,6 +497,9 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
          it.putExtra(KeyIntentConstantsNFC.TRANSACTION_PARTNER_ID_UPLOAD_NFC, json.optString(KeyArgumentMethodChannel.TRANSACTION_PARTNER_ID_UPLOAD_NFC, ""))
          it.putExtra(KeyIntentConstantsNFC.TRANSACTION_PARTNER_ID_RECENT_LOCATION, json.optString(KeyArgumentMethodChannel.TRANSACTION_PARTNER_ID_RECENT_LOCATION, ""))
          it.putExtra(KeyIntentConstantsNFC.TRANSACTION_PARTNER_ID_ORIGINAL_LOCATION, json.optString(KeyArgumentMethodChannel.TRANSACTION_PARTNER_ID_ORIGINAL_LOCATION, ""))
+          it.putExtra(KeyIntentConstantsNFC.IS_SHOW_LOGO, json.optBoolean(KeyArgumentMethodChannel.IS_SHOW_LOGO))
+          it.putExtra(KeyIntentConstantsNFC.MODE_BUTTON_HEADER_BAR, mapModeButtonHeaderBar(json.optString("mode_button_header_bar")))
+
       }
    }
 
@@ -563,6 +575,9 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
            * Truyền chế độ đọc thẻ
            */
           it.putExtra(KeyIntentConstantsNFC.READER_CARD_MODE, SDKEnumNFC.ReaderCardMode.MRZ_CODE.getValue())
+          it.putExtra(KeyIntentConstantsNFC.IS_SHOW_LOGO, json.optBoolean(KeyArgumentMethodChannel.IS_SHOW_LOGO))
+          it.putExtra(KeyIntentConstantsNFC.MODE_BUTTON_HEADER_BAR, mapModeButtonHeaderBar(json.optString("mode_button_header_bar")))
+
       }
    }
 

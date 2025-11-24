@@ -8,6 +8,7 @@ struct KeyArgumentMethodChannel {
     static let isShowTutorial = "is_show_tutorial"
     static let isDisableTutorial = "is_disable_tutorial"
     static let isEnableGotIt = "is_enable_got_it"
+    static let isShowLogo = "is_show_logo"
     static let readerCardMode = "reader_card_mode"
     static let isEnableUploadImage = "is_enable_upload_image"
     static let isEnablePostcodeMatching = "is_enable_postcode_matching"
@@ -53,6 +54,7 @@ struct KeyArgumentMethodChannel {
     static let transactionPartnerIDRecentLocation = "transaction_partner_id_recent_location"
     static let transactionPartnerIDOriginalLocation = "transaction_partner_id_original_location"
     static let nameSSLPinning = "name_ssl_pinning"
+    static let modeButtonHeaderBar = "mode_button_header_bar"
 
 }
 
