@@ -38,17 +38,6 @@ class _NfcScreenState extends State<NfcScreen> {
   /// ----------------------------
   /// COMMON CALL NFC
   /// ----------------------------
-  Future<Map<String, dynamic>> _callNfcApi(
-    Future<Map<String, dynamic>> Function() apiCall,
-  ) async {
-    try {
-      final json = await apiCall();
-      return json.isEmpty ? {} : json;
-    } on PlatformException catch (e) {
-      _showError(e.message ?? '');
-      return {};
-    }
-  }
 
   void loadData() {
     _idCtrl.text = SharedPreferenceService.instance.getString(
@@ -139,7 +128,7 @@ class _NfcScreenState extends State<NfcScreen> {
         );
      _navigate(await ICNfc.instance.qrToNfc(config));
     } on PlatformException catch (e) {
-      _showError(e.toString());
+      _showError("${e.code} - ${e.message}");
     }
   }
 

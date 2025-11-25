@@ -52,7 +52,7 @@ class NfcMethodChannel {
     } on PlatformException catch (e) {
       throw PlatformException(
         code: e.code,
-        message: 'Failed to invoke $methodName: ${e.message}',
+        message: e.message,
         details: e.details,
       );
     } catch (e) {

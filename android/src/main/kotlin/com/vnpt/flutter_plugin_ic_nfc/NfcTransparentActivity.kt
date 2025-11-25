@@ -19,10 +19,13 @@ class NfcTransparentActivity : AppCompatActivity() {
    companion object {
       const val KEY_EXTRA_INFO_NFC = "extra::NFC"
       private const val CHANNEL = "flutter.sdk.ic.nfc/integrate"
-      const val NFC_RESULT = "nfc_result"
-      const val EKYC_REQUEST_CODE = 100
-      const val NFC_NO_GUIDE_REQUEST_CODE = 101
-      const val ERROR_NFC_CODE = "69"
+       private const val NFC_REQUEST_CODE = 11021
+       const val NFC_RESULT = "nfc_result"
+       const val NFC_ERROR = "nfc_error"
+       const val NFC_CODE = "CANCELLED"
+       const val EKYC_REQUEST_CODE = 11022
+       const val NFC_NO_GUIDE_REQUEST_CODE = 11023
+       const val ERROR_NFC_CODE = "69"
    }
 
    private var nfcTool: NfcTool? = null
@@ -42,21 +45,35 @@ class NfcTransparentActivity : AppCompatActivity() {
       nfcTool?.startReadChip(
          NfcOptionNoGuide().setExtras(FlutterPluginIcNfcPlugin.navigateToOnlyNFC(this, jsonObject)),
          object : NfcCallback() {
-            override fun onSuccess(result: NfcResult?) {
-               val intent = Intent()
-               val gson = Gson()
+             override fun onSuccess(result: NfcResult?) {
+                 val intent = Intent()
+                 val gson = Gson()
 
-               intent.putExtra(NFC_RESULT, gson.toJson(result))
-               setResult(RESULT_OK, intent)
-               finish()
-            }
+                 val jsonString = if (result != null) {
+                     gson.toJson(result)
+                 } else {
+                     "{}"
+                 }
 
-            override fun onError(message: NfcError?) {
-               val intent = Intent()
-               intent.putExtra(NFC_RESULT, message)
-               setResult(RESULT_OK, intent)
-               finish()
-            }
+                 intent.putExtra(NFC_RESULT, jsonString)
+                 setResult(RESULT_OK, intent)
+                 finish()
+             }
+
+             override fun onError(message: NfcError?) {
+                 val intent = Intent()
+                 val gson = Gson()
+                 val errorString = if (message != null) {
+                     gson.toJson(message)
+                 } else {
+                     "{\"errorCode\": \"CANCELLED\", \"errorMessage\": \"Unknown/User Cancelled\"}"
+                 }
+
+                 intent.putExtra(NFC_ERROR, "User Cancelled")
+                 intent.putExtra(NFC_CODE, errorString)
+                 setResult(RESULT_CANCELED, intent)
+                 finish()
+             }
          }
       )
    }
