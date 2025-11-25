@@ -18,10 +18,13 @@ class _SettingScreenState extends State<SettingScreen> {
   final TextEditingController _baseUrlController = TextEditingController();
   final TextEditingController _tokenIdEKYCController = TextEditingController();
   final TextEditingController _tokenKeyEKYCController = TextEditingController();
-  final TextEditingController _accessTokenEKYCController = TextEditingController();
+  final TextEditingController _accessTokenEKYCController =
+      TextEditingController();
   bool _isLoading = false;
 
   ICNfcLanguage _languageMode = ICNfcLanguage.icnfc_vi;
+  ModeButtonHeaderBar _modeButtonHeaderBar = ModeButtonHeaderBar.leftButton;
+  bool _isShowLogo = false;
 
   @override
   void initState() {
@@ -48,13 +51,27 @@ class _SettingScreenState extends State<SettingScreen> {
     _tokenKeyEKYCController.text = SharedPreferenceService.instance.getString(
       SharedPreferenceKeys.tokenKeyEKYC,
     );
-    _accessTokenEKYCController.text = SharedPreferenceService.instance.getString(
-      SharedPreferenceKeys.accessTokenEKYC,
+    _accessTokenEKYCController.text = SharedPreferenceService.instance
+        .getString(SharedPreferenceKeys.accessTokenEKYC);
+    _languageMode =
+        SharedPreferenceService.instance.getBool(
+              SharedPreferenceKeys.isViLanguageMode,
+              defaultValue: true,
+            )
+            ? ICNfcLanguage.icnfc_vi
+            : ICNfcLanguage.icnfc_en;
+
+    _modeButtonHeaderBar =
+        SharedPreferenceService.instance.getString(
+                  SharedPreferenceKeys.modeButtonHeaderBar,
+                ) ==
+                ModeButtonHeaderBar.leftButton.name
+            ? ModeButtonHeaderBar.leftButton
+            : ModeButtonHeaderBar.rightButton;
+    _isShowLogo = SharedPreferenceService.instance.getBool(
+      SharedPreferenceKeys.isShowLogo,
+      defaultValue: false,
     );
-    _languageMode = SharedPreferenceService.instance.getBool(
-      SharedPreferenceKeys.isViLanguageMode,
-      defaultValue: true,
-    ) ? ICNfcLanguage.icnfc_vi : ICNfcLanguage.icnfc_en;
   }
 
   @override
@@ -110,6 +127,14 @@ class _SettingScreenState extends State<SettingScreen> {
         SharedPreferenceService.instance.setBool(
           SharedPreferenceKeys.isViLanguageMode,
           _languageMode == ICNfcLanguage.icnfc_vi,
+        ),
+        SharedPreferenceService.instance.setString(
+          SharedPreferenceKeys.modeButtonHeaderBar,
+          _modeButtonHeaderBar.name,
+        ),
+        SharedPreferenceService.instance.setBool(
+          SharedPreferenceKeys.isShowLogo,
+          _isShowLogo,
         ),
       ]);
 
@@ -173,6 +198,24 @@ class _SettingScreenState extends State<SettingScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                Row(children: [
+                  Text('Hiển thị Logo'),
+                  Spacer(),
+                  Switch(value: _isShowLogo, onChanged: (value) {
+                    setState(() => _isShowLogo = value);
+                  }),
+                ],),
+                const SizedBox(height: 16),
+                  Row(children: [
+                      Text('Mode Button Header Bar'),
+                      Spacer(),
+                       Text(_modeButtonHeaderBar.name),
+                      Switch(value: _modeButtonHeaderBar == ModeButtonHeaderBar.leftButton, onChanged: (value) {
+                        setState(() => _modeButtonHeaderBar = value ? ModeButtonHeaderBar.leftButton : ModeButtonHeaderBar.rightButton);
+                      }),
+                     
+                    ],),
+                    const SizedBox(height: 16),
                   // Lanugage mode
                   DropdownButtonFormField<String>(
                     value: _languageMode.channelValue,

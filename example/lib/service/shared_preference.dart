@@ -105,4 +105,7 @@ class SharedPreferenceKeys {
   static const String idNumber = 'id_number';
   static const String birthday = 'birthday';
   static const String expiredDate = 'expired_date';
+
+  static const String modeButtonHeaderBar = 'mode_button_header_bar';
+  static const String isShowLogo = 'is_show_logo';
 }
