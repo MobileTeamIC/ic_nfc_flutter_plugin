@@ -133,6 +133,12 @@ class _NfcScreenState extends State<NfcScreen> {
         languageSdk: _language,
         modeButtonHeaderBar: _modeButtonHeaderBar,
         isShowLogo: _isShowLogo,
+        readingTagsNFC: [
+          CardReaderValues.verifyDocumentInfo.channelValue,
+          CardReaderValues.mrzInfo.channelValue,
+          CardReaderValues.imageAvatarInfo.channelValue,
+          CardReaderValues.securityDataInfo.channelValue,
+        ],
       );
       _navigate(await ICNfc.instance.qrToNfc(config));
     } on PlatformException catch (e) {
@@ -240,16 +246,18 @@ class _NfcScreenState extends State<NfcScreen> {
         appBar: AppBar(
           title: const Text('NFC'),
           actions: [
-             IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SettingScreen()),
-              ).then((_) => loadData());
-            },
-            tooltip: 'Cài đặt',
-          ),
+            IconButton(
+              icon: const Icon(Icons.settings),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SettingScreen(),
+                  ),
+                ).then((_) => loadData());
+              },
+              tooltip: 'Cài đặt',
+            ),
           ],
         ),
         body: SingleChildScrollView(

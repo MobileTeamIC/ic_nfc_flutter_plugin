@@ -59,3 +59,20 @@ extension NfcFlowValue on NfcFlow {
     }
   }
 }
+
+
+enum CardReaderValues { verifyDocumentInfo, mrzInfo, imageAvatarInfo, securityDataInfo }
+extension CardReaderValuesValue on CardReaderValues {
+  int get channelValue {
+    switch (this) {
+      case CardReaderValues.verifyDocumentInfo:
+        return 100019;
+      case CardReaderValues.mrzInfo:
+        return 100020;
+      case CardReaderValues.imageAvatarInfo:
+        return 100021;
+      case CardReaderValues.securityDataInfo:
+        return 100022;
+    }
+  }
+}
