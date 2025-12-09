@@ -30,7 +30,7 @@ class ICNfcConfig {
   final bool? isEnablePostcodeMatching;
   final String? inputClientSession;
   final String? challengeCode;
-  final List<String>? readingTagsNFC;
+  final List<int>? readingTagsNFC;
   final bool? isEnableCheckChipClone;
   final bool? isEnableWaterMark;
   final bool? isEnableAddIdCheckData;
@@ -309,7 +309,7 @@ class ICNfcConfig {
     bool? isEnablePostcodeMatching,
     String? inputClientSession,
     String? challengeCode,
-    List<String>? readingTagsNFC,
+    List<int>? readingTagsNFC,
     bool? isEnableCheckChipClone,
     bool? isEnableWaterMark,
     bool? isEnableAddIdCheckData,
