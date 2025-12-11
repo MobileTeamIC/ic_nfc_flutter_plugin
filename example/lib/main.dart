@@ -6,6 +6,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_plugin_ic_nfc_example/theme/app_theme.dart';
 import 'package:flutter_plugin_ic_nfc_example/view/home_screen.dart';
+import 'package:flutter_plugin_ic_nfc_example/view/nfc_screen.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'service/shared_preference.dart';
@@ -24,14 +26,21 @@ class SampleIntegrateEkycApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return ShadApp(
       title: 'VNPT NFC SDK',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
+      darkTheme: ShadThemeData(
+        brightness: Brightness.dark,
+        colorScheme: const ShadGreenColorScheme.dark(),
+      ),
+      theme: ShadThemeData(
+        brightness: Brightness.light,
+        colorScheme: const ShadGreenColorScheme.light(),
+      ),
       home: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () => FocusScope.of(context).unfocus(),
-        child: const HomeScreen(title: 'VNPT NFC SDK'),
+        child: const NfcScreen(),
       ),
     );
   }

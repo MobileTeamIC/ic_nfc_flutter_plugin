@@ -66162,7 +66162,7 @@
     {
       "filePath": "\/Users\/devj666\/Documents\/WorkPlace\/VNPT\/iOS\/SDK\/nfc_ios_sdk\/ICNFCCardReader\/ICNFCCardReader\/Helpers\/ICNFCCodeSwift\/NFCPassportReader\/OpenSSLUtils.swift",
       "kind": "StringLiteral",
-      "offset": 17203,
+      "offset": 17615,
       "length": 2,
       "value": "\"\""
     },
@@ -70775,7 +70775,7 @@
     {
       "filePath": "\/Users\/devj666\/Documents\/WorkPlace\/VNPT\/iOS\/SDK\/nfc_ios_sdk\/ICNFCCardReader\/ICNFCCardReader\/Helpers\/ICNFCCodeSwift\/NFCPassportReader\/PACEHandler.swift",
       "kind": "BooleanLiteral",
-      "offset": 4780,
+      "offset": 4918,
       "length": 5,
       "value": "false"
     },

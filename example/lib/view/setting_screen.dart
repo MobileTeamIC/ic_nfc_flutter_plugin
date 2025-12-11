@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_plugin_ic_nfc/nfc/services/enum_nfc.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 import '../service/shared_preference.dart';
+import '../theme/context.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -139,40 +142,22 @@ class _SettingScreenState extends State<SettingScreen> {
       ]);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Row(
-              children: [
-                Icon(Icons.check_circle, color: Colors.white),
-                SizedBox(width: 8),
-                Text('Đã lưu cài đặt thành công'),
-              ],
-            ),
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
+        ShadToaster.of(context).show(
+          ShadToast(
+            title: Text('Đã lưu cài đặt thành công'),
+            titleStyle: context.textTheme.p.copyWith(color: Colors.white),
+            backgroundColor: context.colorScheme.primary,
           ),
         );
         Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                const Icon(Icons.error_outline, color: Colors.white),
-                const SizedBox(width: 8),
-                Expanded(child: Text('Lỗi khi lưu: $e')),
-              ],
-            ),
-            backgroundColor: Theme.of(context).colorScheme.error,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
+        ShadToaster.of(context).show(
+          ShadToast(
+            title: Text('Lỗi khi lưu: $e'),
+            titleStyle: context.textTheme.p.copyWith(color: Colors.white),
+            backgroundColor: context.colorScheme.destructive,
           ),
         );
       }
@@ -189,141 +174,277 @@ class _SettingScreenState extends State<SettingScreen> {
       behavior: HitTestBehavior.opaque,
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        appBar: AppBar(title: const Text('Cài đặt')),
+        appBar: AppBar(title: Text('Cài đặt', style: context.textTheme.h3)),
         body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                Row(children: [
-                  Text('Hiển thị Logo'),
-                  Spacer(),
-                  Switch(value: _isShowLogo, onChanged: (value) {
-                    setState(() => _isShowLogo = value);
-                  }),
-                ],),
-                const SizedBox(height: 16),
-                  Row(children: [
-                      Text('Mode Button Header Bar'),
-                      Spacer(),
-                       Text(_modeButtonHeaderBar.name),
-                      Switch(value: _modeButtonHeaderBar == ModeButtonHeaderBar.leftButton, onChanged: (value) {
-                        setState(() => _modeButtonHeaderBar = value ? ModeButtonHeaderBar.leftButton : ModeButtonHeaderBar.rightButton);
-                      }),
-                     
-                    ],),
-                    const SizedBox(height: 16),
-                  // Lanugage mode
-                  DropdownButtonFormField<String>(
-                    value: _languageMode.channelValue,
-                    items: [
-                      DropdownMenuItem(
-                        value: ICNfcLanguage.icnfc_vi.channelValue,
-                        child: Text('Tiếng Việt'),
-                      ),
-                      DropdownMenuItem(
-                        value: ICNfcLanguage.icnfc_en.channelValue,
-                        child: Text('Tiếng Anh'),
-                      ),
-                    ],
-                    onChanged: (value) {
-                      setState(
-                        () =>
-                            _languageMode = ICNfcLanguage.values.firstWhere(
-                              (e) => e.channelValue == value,
+          child: Column(
+            spacing: 16,
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  physics: const BouncingScrollPhysics(),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      spacing: 16,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              'Hiển thị Logo',
+                              style: context.textTheme.large,
                             ),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 16),
+                            Spacer(),
+                            ShadSwitch(
+                              value: _isShowLogo,
+                              onChanged: (v) => setState(() => _isShowLogo = v),
+                            ),
+                          ],
+                        ),
+                        _titleAndWidget(
+                          'Mode Button Header Bar',
+                          ShadSelect<String>(
+                            selectedOptionBuilder:
+                                (context, value) => Text(value),
+                            placeholder: const Text(' Mode Button Header Bar'),
 
-                  TextField(
-                    controller: _accessTokenController,
-                    decoration: const InputDecoration(
-                      labelText: 'Access Token',
-                      hintText: 'Nhập Access Token',
-                      prefixIcon: Icon(Icons.vpn_key),
+                            options: [
+                              ShadOption(
+                                value: ModeButtonHeaderBar.leftButton.name,
+                                child: Text(
+                                  ModeButtonHeaderBar.leftButton.name,
+                                ),
+                              ),
+                              ShadOption(
+                                value: ModeButtonHeaderBar.rightButton.name,
+                                child: Text(
+                                  ModeButtonHeaderBar.rightButton.name,
+                                ),
+                              ),
+                            ],
+                            onChanged:
+                                (value) => setState(
+                                  () =>
+                                      _modeButtonHeaderBar = ModeButtonHeaderBar
+                                          .values
+                                          .firstWhere((e) => e.name == value),
+                                ),
+                          ),
+                        ),
+
+                        // Lanugage mode
+                        _titleAndWidget(
+                          'Ngôn ngữ',
+                          ShadSelect<String>(
+                            selectedOptionBuilder:
+                                (context, value) => Text(value == ICNfcLanguage.icnfc_vi.name ? 'Tiếng Việt' : 'Tiếng Anh'),
+                            placeholder: const Text(' Chọn Ngôn ngữ'),
+                            onChanged: (value) => setState(() => _languageMode = ICNfcLanguage.values.firstWhere((e) => e.name == value)),
+                            initialValue: _languageMode.name,
+                            options: [
+                              ShadOption(
+                                value: ICNfcLanguage.icnfc_vi.name,
+                                child: Text('Tiếng Việt'),
+                              ),
+                              ShadOption(
+                                value: ICNfcLanguage.icnfc_en.name,
+                                child: Text('Tiếng Anh'),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                         // Base URL
+                        _titleAndTextFormField(
+                          id: 'base_url',
+                          title: 'Base URL',
+                          placeholder: 'Nhập Base URL',
+                          controller: _baseUrlController,
+                        ),
+
+                          // access token
+                        _titleAndTextFormField(
+                          id: 'access_token',
+                          title: 'Access Token',
+                          placeholder: 'Nhập Access Token',
+                          controller: _accessTokenController,
+                          isTextArea: true,
+                        ),
+                      
+                        // Token ID
+                        _titleAndTextFormField(
+                          id: 'token_id',
+                          title: 'Token ID',
+                          placeholder: 'Nhập Token ID',
+                          controller: _tokenIdController,
+                        ),
+
+                        // Token Key
+                        _titleAndTextFormField(
+                          id: 'token_key',
+                          title: 'Token Key',
+                          placeholder: 'Nhập Token Key',
+                          controller: _tokenKeyController,
+                        ),
+
+                        // access token ekyc
+                        _titleAndTextFormField(
+                          id: 'access_token_ekyc',
+                          title: 'Access Token EKYC',
+                          placeholder: 'Nhập Access Token EKYC',
+                          controller: _accessTokenEKYCController,
+                        ),
+
+                       
+
+                        // tokenIdEKYC
+                        _titleAndTextFormField(
+                          id: 'token_id_ekyc',
+                          title: 'Token ID EKYC',
+                          placeholder: 'Nhập Token ID EKYC',
+                          controller: _tokenIdEKYCController,
+                        ),
+
+                        // tokenKeyEKYC
+                        _titleAndTextFormField(
+                          id: 'token_key_ekyc',
+                          title: 'Token Key EKYC',
+                          placeholder: 'Nhập Token Key EKYC',
+                          controller: _tokenKeyEKYCController,
+                        ),
+                      ],
                     ),
-                    textInputAction: TextInputAction.next,
                   ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: _tokenIdController,
-                    decoration: const InputDecoration(
-                      labelText: 'Token ID',
-                      hintText: 'Nhập Token ID',
-                      prefixIcon: Icon(Icons.badge),
-                    ),
-                    textInputAction: TextInputAction.next,
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: _tokenKeyController,
-                    decoration: const InputDecoration(
-                      labelText: 'Token Key',
-                      hintText: 'Nhập Token Key',
-                      prefixIcon: Icon(Icons.key),
-                    ),
-                    textInputAction: TextInputAction.next,
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: _accessTokenEKYCController,
-                    decoration: const InputDecoration(
-                      labelText: 'Access Token EKYC',
-                      hintText: 'Nhập Access Token EKYC',
-                      prefixIcon: Icon(Icons.vpn_key),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: _baseUrlController,
-                    decoration: const InputDecoration(
-                      labelText: 'Base URL',
-                      hintText: 'https://api.example.com',
-                      prefixIcon: Icon(Icons.link),
-                    ),
-                    keyboardType: TextInputType.url,
-                    textInputAction: TextInputAction.done,
-                  ),
-                  const SizedBox(height: 16),
-                  // tokenIdEKYC
-                  TextField(
-                    controller: _tokenIdEKYCController,
-                    decoration: const InputDecoration(
-                      labelText: 'Token ID EKYC',
-                      hintText: 'Nhập Token ID EKYC',
-                      prefixIcon: Icon(Icons.badge),
-                    ),
-                    textInputAction: TextInputAction.next,
-                  ),
-                  const SizedBox(height: 16),
-                  // tokenKeyEKYC
-                  TextField(
-                    controller: _tokenKeyEKYCController,
-                    decoration: const InputDecoration(
-                      labelText: 'Token Key EKYC',
-                      hintText: 'Nhập Token Key EKYC',
-                      prefixIcon: Icon(Icons.key),
-                    ),
-                    textInputAction: TextInputAction.done,
-                  ),
-                  const SizedBox(height: 32),
-                  // save button
-                  ElevatedButton(
-                    onPressed: _isLoading ? null : _saveSettings,
-                    child: Text(_isLoading ? 'Đang lưu...' : 'Lưu cài đặt'),
-                  ),
-                  const SizedBox(height: 16),
-                ],
+                ),
               ),
-            ),
+              // save button
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                child: ShadButton(
+                  onPressed: _isLoading ? null : _saveSettings,
+                  backgroundColor: context.colorScheme.primary,
+                  width: double.infinity,
+                  height: 48,
+                  child: Text(
+                    _isLoading ? 'Đang lưu...' : 'Lưu cài đặt',
+                    style: context.textTheme.large,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
+  }
+
+  _titleAndTextFormField({
+    required String id,
+    required String title,
+    required String placeholder,
+    required TextEditingController controller,
+    bool isTextArea = false,
+  }) {
+    if (isTextArea) {
+      return ShadTextareaFormField(
+        id: id,
+        label: Text(title),
+        resizable: true,
+        maxHeight: 400,
+        minHeight: 100,
+        placeholder: Text(placeholder),
+        controller: controller,
+        trailing: Row(
+          spacing: 8,
+          children: [
+            ShadIconButton(
+              backgroundColor: context.colorScheme.cardForeground,
+              width: 32,
+              height: 32,
+              onPressed: () => _handlePaste(context, controller),
+              icon: const Icon(LucideIcons.clipboardPaste),
+            ),
+            ShadIconButton(
+              backgroundColor: context.colorScheme.cardForeground,
+              width: 32,
+              height: 32,
+              onPressed: () => _handleCopy(controller.text),
+              icon: const Icon(LucideIcons.copy),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return ShadInputFormField(
+        id: id,
+        label: Text(title),
+        placeholder: Text(placeholder),
+        controller: controller,
+        trailing: Row(
+          spacing: 8,
+          children: [
+            ShadIconButton(
+              backgroundColor: context.colorScheme.cardForeground,
+              width: 32,
+              height: 32,
+              onPressed: () => _handlePaste(context, controller),
+              icon: const Icon(LucideIcons.clipboardPaste),
+            ),
+            ShadIconButton(
+              backgroundColor: context.colorScheme.cardForeground,
+              width: 32,
+              height: 32,
+              onPressed: () => _handleCopy(controller.text),
+              icon: const Icon(LucideIcons.copy),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  _titleAndWidget(String title, Widget widget) {
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      spacing: 8,
+      children: [
+        Text(title, style: Theme.of(context).textTheme.titleSmall),
+        widget,
+      ],
+    );
+  }
+
+  //handle
+  _handleCopy(String text) {
+    Clipboard.setData(ClipboardData(text: text));
+    ShadToaster.of(context).show(
+      ShadToast(
+        title: Text('Đã copy vào clipboard'),
+        titleStyle: context.textTheme.p.copyWith(color: Colors.white),
+        backgroundColor: context.colorScheme.primary,
+      ),
+    );
+  }
+
+  _handlePaste(BuildContext context, TextEditingController controller) async {
+    final clipboard = await Clipboard.getData(Clipboard.kTextPlain);
+    if (clipboard != null) {
+      controller.text = clipboard.text ?? '';
+      if (context.mounted) {
+        ShadToaster.of(context).show(
+          ShadToast(
+            title: Text('Đã paste vào clipboard'),
+            titleStyle: context.textTheme.p.copyWith(color: Colors.white),
+            backgroundColor: context.colorScheme.primary,
+          ),
+        );
+      }
+    }
   }
 }

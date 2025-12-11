@@ -171,12 +171,7 @@ public class FlutterPluginIcNfcPlugin: NSObject, FlutterPlugin {
         configureNFCCommonOptions(for: reader, args: args, includeLanguageAndTutorial: false)
         configureUIOptions(for: reader, args: args)
         
-        reader.modalPresentationStyle = .fullScreen
-        reader.modalTransitionStyle = .coverVertical
-        controller.present(reader, animated: true) {
-            print("NFCOutside reader presented, starting NFC read")
-            reader.startNFCReaderOutSide()
-        }
+        reader.startNFCReaderOutSide()
     }
     
     // MARK: - Helpers
