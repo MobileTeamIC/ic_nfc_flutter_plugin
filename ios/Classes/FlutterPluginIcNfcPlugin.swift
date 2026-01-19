@@ -2,12 +2,14 @@ import Flutter
 import UIKit
 import ICNFCCardReader
 
-public class FlutterPluginIcNfcPlugin: NSObject, FlutterPlugin {
+public class FlutterPluginIcNfcPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
     private enum Channel {
-        static let name = "flutter.sdk.ic.nfc/integrate"
+        static let method = "flutter.sdk.ic.nfc/integrate"
+        static let event = "flutter.sdk.ic.nfc/events"
     }
     
     private var pendingResult: FlutterResult?
+    private var eventSink: FlutterEventSink?
     
     private var flutterViewController: UIViewController? {
         var keyWindow: UIWindow?
@@ -33,9 +35,34 @@ public class FlutterPluginIcNfcPlugin: NSObject, FlutterPlugin {
     }
     
     public static func register(with registrar: FlutterPluginRegistrar) {
-        let channel = FlutterMethodChannel(name: Channel.name, binaryMessenger: registrar.messenger())
         let instance = FlutterPluginIcNfcPlugin()
-        registrar.addMethodCallDelegate(instance, channel: channel)
+        
+        // Register MethodChannel for request-response operations
+        let methodChannel = FlutterMethodChannel(name: Channel.method, binaryMessenger: registrar.messenger())
+        registrar.addMethodCallDelegate(instance, channel: methodChannel)
+        
+        // Register EventChannel for streaming NFC state events
+        let eventChannel = FlutterEventChannel(name: Channel.event, binaryMessenger: registrar.messenger())
+        eventChannel.setStreamHandler(instance)
+        
+        // Setup background transparent
+        DispatchQueue.main.async {
+            var keyWindow: UIWindow?
+            if #available(iOS 13.0, *) {
+                keyWindow = UIApplication.shared.connectedScenes
+                    .compactMap { $0 as? UIWindowScene }
+                    .flatMap { $0.windows }
+                    .first { $0.isKeyWindow }
+            } else {
+                keyWindow = UIApplication.shared.windows.first { $0.isKeyWindow }
+            }
+            
+            if let window = keyWindow,
+               let flutterViewController = window.rootViewController as? FlutterViewController {
+                flutterViewController.view.backgroundColor = UIColor.clear
+                flutterViewController.view.isOpaque = false
+            }
+        }
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -114,7 +141,6 @@ public class FlutterPluginIcNfcPlugin: NSObject, FlutterPlugin {
     }
     
     // MARK: - Only NFC (UI)
-    
     private func actionStartOnlyNFC(_ controller: UIViewController, args: [String: Any]) {
         guard validateNFCPersonalInfo(args) else {
             sendInvalidArgumentsError("You must provide idNumber (12 digits), birthday (YYMMDD) and expiredDate (YYMMDD).")
@@ -146,7 +172,6 @@ public class FlutterPluginIcNfcPlugin: NSObject, FlutterPlugin {
     }
     
     // MARK: - Only NFC (Without UI)
-    
     private func actionStartOnlyNFCWithoutUI(_ controller: UIViewController, args: [String: Any]) {
         guard validateNFCPersonalInfo(args) else {
             sendInvalidArgumentsError("You must provide idNumber (12 digits), birthday (YYMMDD) and expiredDate (YYMMDD).")
@@ -171,12 +196,7 @@ public class FlutterPluginIcNfcPlugin: NSObject, FlutterPlugin {
         configureNFCCommonOptions(for: reader, args: args, includeLanguageAndTutorial: false)
         configureUIOptions(for: reader, args: args)
         
-        reader.modalPresentationStyle = .fullScreen
-        reader.modalTransitionStyle = .coverVertical
-        controller.present(reader, animated: true) {
-            print("NFCOutside reader presented, starting NFC read")
-            reader.startNFCReaderOutSide()
-        }
+        reader.startNFCReaderOutSide()
     }
     
     // MARK: - Helpers
@@ -446,10 +466,39 @@ extension FlutterPluginIcNfcPlugin: ICMainNFCReaderDelegate {
     }
     
     public func icNFCCardReader(_ state: ICNFCReaderState, progress: Int, error: String) {
-        print("NFC State: \(state), Progress: \(progress)%, Error: \(error)")
+        print("NFC State: \(state), Progress: \(progress)%, Error: \(error) - end log NFC State")
+        
+        // Stream events to Flutter
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self, let sink = self.eventSink else { return }
+            
+            let event: [String: Any] = [
+                "state": state.rawValue,
+                "progress": progress,
+                "error": error
+            ]
+            
+            sink(event)
+        }
     }
     
     public func icNFCPopupReaderChipDisappear() {
         print("NFC popup disappeared")
+    }
+}
+
+// MARK: - FlutterStreamHandler
+extension FlutterPluginIcNfcPlugin {
+    
+    /// Called when Flutter starts listening to the event stream
+    public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
+        self.eventSink = events
+        return nil
+    }
+    
+    /// Called when Flutter stops listening to the event stream
+    public func onCancel(withArguments arguments: Any?) -> FlutterError? {
+        self.eventSink = nil
+        return nil
     }
 }

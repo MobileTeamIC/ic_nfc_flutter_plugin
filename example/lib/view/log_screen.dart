@@ -4,6 +4,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_plugin_ic_nfc/nfc/services/nfc_key_result.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
+
+import '../theme/context.dart';
 
 class LogScreen extends StatefulWidget {
   final Map<String, dynamic> json;
@@ -214,21 +217,11 @@ class _LogScreenState extends State<LogScreen> {
     if (content != null && content.trim().isNotEmpty) {
       await Clipboard.setData(ClipboardData(text: content));
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Row(
-              children: [
-                Icon(Icons.check_circle, color: Colors.white, size: 20),
-                SizedBox(width: 8),
-                Text('Đã sao chép'),
-              ],
-            ),
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            behavior: SnackBarBehavior.floating,
-            duration: const Duration(seconds: 1),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
+        ShadToaster.of(context).show(
+          ShadToast(
+            title: Text('Đã sao chép'),
+            titleStyle: context.theme.textTheme.p.copyWith(color: Colors.white),
+            backgroundColor: context.theme.colorScheme.primary,
           ),
         );
       }
@@ -381,20 +374,11 @@ class _LogScreenState extends State<LogScreen> {
     if (buffer.isNotEmpty) {
       await Clipboard.setData(ClipboardData(text: buffer.toString()));
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Row(
-              children: [
-                Icon(Icons.check_circle, color: Colors.white),
-                SizedBox(width: 8),
-                Text('Đã sao chép tất cả'),
-              ],
-            ),
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
+        ShadToaster.of(context).show(
+          ShadToast(
+            title: Text('Đã sao chép tất cả'),
+            titleStyle: context.theme.textTheme.p.copyWith(color: Colors.white),
+            backgroundColor: context.theme.colorScheme.primary,
           ),
         );
       }
