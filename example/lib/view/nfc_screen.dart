@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_plugin_ic_nfc/flutter_plugin_ic_nfc.dart';
 import 'package:flutter_plugin_ic_nfc/nfc/nfc.dart';
 import 'package:flutter_plugin_ic_nfc/nfc/services/enum_nfc.dart';
 import 'package:flutter_plugin_ic_nfc/nfc/services/nfc_presentation.dart';
@@ -32,10 +35,53 @@ class _NfcScreenState extends State<NfcScreen> {
   ModeButtonHeaderBar _modeButtonHeaderBar = ModeButtonHeaderBar.leftButton;
   bool _isShowLogo = false;
 
+  // Stream subscription for NFC events
+  StreamSubscription<NfcReaderEvent>? _nfcEventSubscription;
+
   @override
   void initState() {
     super.initState();
     loadData();
+    _startListeningToNfcEvents();
+  }
+
+  /// Start listening to NFC reader state events
+  void _startListeningToNfcEvents() {
+    _nfcEventSubscription = ICNfc.instance.nfcReaderStateStream.listen(
+      (event) {
+        // Print event to console
+        print('═══════════════════════════════════════');
+        print('NFC Event Received:');
+        print('   State: ${event.state}');
+        print('   Progress: ${event.progress}%');
+        if (event.error.isNotEmpty) {
+          print('   Error: ${event.error}');
+        }
+        print('═══════════════════════════════════════');
+
+        // Handle different states
+        switch (event.state) {
+          case ICNFCReaderState.started:
+            print('✅ NFC Reader Started - Waiting for card...');
+            break;
+          case ICNFCReaderState.didDetect:
+            print('✅ NFC Card Detected!');
+            break;
+          case ICNFCReaderState.reading:
+            print('✅ Reading NFC Card... ${event.progress}%');
+            break;
+          case ICNFCReaderState.didError:
+            print('❌ NFC Error: ${event.error}');
+            break;
+          case ICNFCReaderState.completed:
+            print('✅ NFC Reading Completed!');
+            break;
+        }
+      },
+      onError: (error) {
+        print('❌ NFC Stream Error: $error');
+      },
+    );
   }
 
   void loadData() {
@@ -101,7 +147,7 @@ class _NfcScreenState extends State<NfcScreen> {
     }
   }
 
-// MARK: - Validation
+  // MARK: - Validation
   bool _validateInputs() {
     final id = _idCtrl.text.trim();
     final dob = _dobCtrl.text.trim();
@@ -118,7 +164,7 @@ class _NfcScreenState extends State<NfcScreen> {
     return true;
   }
 
-// MARK: - NFC Flows
+  // MARK: - NFC Flows
   Future<void> _qrToNfc() async {
     try {
       final config = NfcPresets.qrToNfc(
@@ -190,18 +236,19 @@ class _NfcScreenState extends State<NfcScreen> {
     }
   }
 
-Future<void> _showInputDOBAndExpiredDateDialog() async {
-  showDialog(
-    context: context,
-    builder: (context) {
-      return _DiaLogCommonIC(
-        idCtrl: _idCtrl,
-        dobCtrl: _dobCtrl,
-        expCtrl: _expCtrl,
-        onConfirm: () => _nfcWithUi(),
-        onCancel: () => Navigator.pop(context),
-      );
-    });
+  Future<void> _showInputDOBAndExpiredDateDialog({bool isWithUI = true}) async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return _DiaLogCommonIC(
+          idCtrl: _idCtrl,
+          dobCtrl: _dobCtrl,
+          expCtrl: _expCtrl,
+          onConfirm: () => isWithUI ? _nfcWithUi() : _nfcWithoutUi(),
+          onCancel: () => Navigator.pop(context),
+        );
+      },
+    );
   }
 
   Future<void> _nfcWithoutUi() async {
@@ -228,7 +275,7 @@ Future<void> _showInputDOBAndExpiredDateDialog() async {
     }
   }
 
-// MARK: - Error UI
+  // MARK: - Error UI
   void _showError(String message) {
     ShadToaster.of(context).show(
       ShadToast.destructive(
@@ -239,7 +286,17 @@ Future<void> _showInputDOBAndExpiredDateDialog() async {
     );
   }
 
-// MARK: - UI
+  @override
+  void dispose() {
+    // Cancel stream subscription to prevent memory leaks
+    _nfcEventSubscription?.cancel();
+    _idCtrl.dispose();
+    _dobCtrl.dispose();
+    _expCtrl.dispose();
+    super.dispose();
+  }
+
+  // MARK: - UI
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -266,7 +323,7 @@ Future<void> _showInputDOBAndExpiredDateDialog() async {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              Text("NFC SDK", style: context.textTheme.h1,),
+              Text("NFC SDK", style: context.textTheme.h1),
               const SizedBox(height: 16),
               _ActionCard(
                 icon: Icons.qr_code,
@@ -285,16 +342,20 @@ Future<void> _showInputDOBAndExpiredDateDialog() async {
               _ActionCard(
                 icon: Icons.nfc,
                 title: "Nhập thông tin -> Đọc chip NFC",
-                description1: "Nhập thông tin số CMND/CCCD, ngày sinh, ngày hết hạn",
+                description1:
+                    "Nhập thông tin số CMND/CCCD, ngày sinh, ngày hết hạn",
                 description2: "Đọc thông tin từ chip NFC",
                 onTap: () async => _showInputDOBAndExpiredDateDialog(),
               ),
               _ActionCard(
                 icon: Icons.nfc_rounded,
                 title: "Nhập thông tin -> Đọc chip NFC tại ứng dụng",
-                description1: "Nhập thông tin số CMND/CCCD, ngày sinh, ngày hết hạn",
+                description1:
+                    "Nhập thông tin số CMND/CCCD, ngày sinh, ngày hết hạn",
                 description2: "Đọc thông tin từ chip NFC",
-                onTap: () async => _nfcWithoutUi(),
+                onTap:
+                    () async =>
+                        _showInputDOBAndExpiredDateDialog(isWithUI: false),
               ),
             ],
           ),
@@ -336,6 +397,7 @@ class _InputField extends StatelessWidget {
     );
   }
 }
+
 class _ActionCard extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -360,9 +422,7 @@ class _ActionCard extends StatelessWidget {
       elevation: 0,
       clipBehavior: Clip.antiAlias,
       surfaceTintColor: theme.colorScheme.surfaceTint,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: onTap,
         child: Padding(
@@ -377,10 +437,7 @@ class _ActionCard extends StatelessWidget {
                   color: theme.colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
-                  icon,
-                  color: theme.colorScheme.onPrimaryContainer,
-                ),
+                child: Icon(icon, color: theme.colorScheme.onPrimaryContainer),
               ),
 
               const SizedBox(width: 16),
@@ -403,27 +460,17 @@ class _ActionCard extends StatelessWidget {
                     const SizedBox(height: 8),
 
                     // DESCRIPTION 1
-                    _iconTextRow(
-                      context,
-                      theme,
-                      description1,
-                    ),
+                    _iconTextRow(context, theme, description1),
 
                     const SizedBox(height: 6),
 
                     // DESCRIPTION 2
-                    _iconTextRow(
-                      context,
-                      theme,
-                      description2,
-                    ),
+                    _iconTextRow(context, theme, description2),
                   ],
                 ),
               ),
 
               const SizedBox(width: 8),
-
-             
             ],
           ),
         ),
@@ -457,79 +504,85 @@ class _ActionCard extends StatelessWidget {
   }
 }
 
-
 class _DiaLogCommonIC extends StatelessWidget {
-   final TextEditingController idCtrl;
+  final TextEditingController idCtrl;
   final TextEditingController dobCtrl;
   final TextEditingController expCtrl;
   final VoidCallback onConfirm;
   final VoidCallback onCancel;
-  const _DiaLogCommonIC({required this.idCtrl, required this.dobCtrl, required this.expCtrl, required this.onConfirm, required this.onCancel});
- 
+  const _DiaLogCommonIC({
+    required this.idCtrl,
+    required this.dobCtrl,
+    required this.expCtrl,
+    required this.onConfirm,
+    required this.onCancel,
+  });
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
-        insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            maxWidth: 420, // 👈 tăng/giảm để rộng hơn
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Nhập thông tin',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 16),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(
+          maxWidth: 420, // 👈 tăng/giảm để rộng hơn
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Nhập thông tin',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 16),
 
-                // Nội dung input
-                _InputField(label: "Số CMND/CCCD", controller: idCtrl),
-                const SizedBox(height: 12),
-                _InputField(label: "Ngày sinh - YYMMDD", controller: dobCtrl),
-                const SizedBox(height: 12),
-                _InputField(label: "Ngày hết hạn - YYMMDD", controller: expCtrl),
+              // Nội dung input
+              _InputField(label: "Số CMND/CCCD", controller: idCtrl),
+              const SizedBox(height: 12),
+              _InputField(label: "Ngày sinh - YYMMDD", controller: dobCtrl),
+              const SizedBox(height: 12),
+              _InputField(label: "Ngày hết hạn - YYMMDD", controller: expCtrl),
 
-                const SizedBox(height: 24),
+              const SizedBox(height: 24),
 
-                // Actions
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 12),
-                        backgroundColor:
-                            Theme.of(context).colorScheme.surfaceContainerLow,
+              // Actions
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 12,
                       ),
-                      onPressed: onCancel,
-                      child: const Text("Hủy"),
+                      backgroundColor:
+                          Theme.of(context).colorScheme.surfaceContainerLow,
                     ),
-                    const SizedBox(width: 12),
-                    TextButton(
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 12),
-                        backgroundColor:
-                            Theme.of(context).colorScheme.primary,
-                        foregroundColor:
-                            Theme.of(context).colorScheme.onPrimary,
+                    onPressed: onCancel,
+                    child: const Text("Hủy"),
+                  ),
+                  const SizedBox(width: 12),
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 12,
                       ),
-                      onPressed: onConfirm,
-                      child: const Text("Xác nhận"),
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
                     ),
-                  ],
-                )
-              ],
-            ),
+                    onPressed: onConfirm,
+                    child: const Text("Xác nhận"),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
-      );
-   
+      ),
+    );
   }
 }

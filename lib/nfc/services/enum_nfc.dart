@@ -76,3 +76,23 @@ extension CardReaderValuesValue on CardReaderValues {
     }
   }
 }
+
+enum ICNFCReaderState {
+  started(0),        // Bắt đầu lắng nghe
+  didDetect(1),      // Phát hiện thẻ
+  reading(2),        // Đang đọc
+  didError(3),       // Lỗi
+  completed(4);      // Hoàn thành
+
+  final int value;
+  const ICNFCReaderState(this.value);
+
+  /// Convert từ int sang enum
+  static ICNFCReaderState fromInt(int value) {
+    return ICNFCReaderState.values.firstWhere(
+      (e) => e.value == value,
+      orElse: () => ICNFCReaderState.started,
+    );
+  }
+}
+
