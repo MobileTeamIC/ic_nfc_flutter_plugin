@@ -14,8 +14,8 @@ Plugin Flutter để tích hợp NFC SDK cho việc đọc thông tin từ thẻ
 dependencies:
   flutter_plugin_ic_nfc:
     git:
-      url: path/flutter_plugin_ic_nfc
-      ref: 
+      url: https://github.com/MobileTeamIC/ic_nfc_flutter_plugin.git
+      ref: v1.0.0
 ```
 
 
@@ -75,12 +75,7 @@ import 'package:flutter_plugin_ic_nfc/nfc/nfc.dart';
 
 ### 1. QR Code → NFC
 
-
-
 ### 2. MRZ → NFC
-
-
-
 
 ### 3. NFC với UI
 

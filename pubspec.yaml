@@ -1,6 +1,6 @@
 name: flutter_plugin_ic_nfc
-description: "A new Flutter plugin project."
-version: 0.0.1
+description: "Flutter plugin made by VNPT AI Team"
+version: 1.0.0
 
 environment:
   sdk: ^3.7.2
