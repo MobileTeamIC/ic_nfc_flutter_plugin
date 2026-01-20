@@ -184,7 +184,7 @@ public class FlutterPluginIcNfcPlugin: NSObject, FlutterPlugin {
         reader.expiredDateCard = args[KeyArgumentMethodChannel.expiredDate] as? String ?? ""
         
         configureAuthentication(for: reader, with: args)
-        configureNFCCommonOptions(for: reader, args: args, includeLanguageAndTutorial: false)
+        configureNFCCommonOptions(for: reader, args: args)
         configureUIOptions(for: reader, args: args)
         
         reader.startNFCReaderOutSide()
@@ -254,15 +254,11 @@ public class FlutterPluginIcNfcPlugin: NSObject, FlutterPlugin {
     }
     
     private func configureNFCCommonOptions(for reader: ICMainNFCReaderViewController,
-                                           args: [String: Any],
-                                           includeLanguageAndTutorial: Bool = true) {
-        if includeLanguageAndTutorial {
-            reader.languageSdk = args[KeyArgumentMethodChannel.languageSdk] as? String ?? "icnfc_vi"
-            reader.isShowTutorial = args[KeyArgumentMethodChannel.isShowTutorial] as? Bool ?? false
-            reader.isEnableGotIt = args[KeyArgumentMethodChannel.isEnableGotIt] as? Bool ?? false
-            reader.isDisableTutorial = args[KeyArgumentMethodChannel.isDisableTutorial] as? Bool ?? false
-        }
-        
+                                           args: [String: Any]) {
+        reader.languageSdk = args[KeyArgumentMethodChannel.languageSdk] as? String ?? "icnfc_vi"
+        reader.isShowTutorial = args[KeyArgumentMethodChannel.isShowTutorial] as? Bool ?? false
+        reader.isEnableGotIt = args[KeyArgumentMethodChannel.isEnableGotIt] as? Bool ?? false
+        reader.isDisableTutorial = args[KeyArgumentMethodChannel.isDisableTutorial] as? Bool ?? false
         reader.isEnableUploadImage = args[KeyArgumentMethodChannel.isEnableUploadImage] as? Bool ?? true
         reader.isEnablePostcodeMatching = args[KeyArgumentMethodChannel.isEnablePostcodeMatching] as? Bool ?? false
         reader.inputClientSession = args[KeyArgumentMethodChannel.inputClientSession] as? String ?? ""
@@ -319,7 +315,7 @@ public class FlutterPluginIcNfcPlugin: NSObject, FlutterPlugin {
         reader.transactionPartnerIDRecentLocation = args[KeyArgumentMethodChannel.transactionPartnerIDRecentLocation] as? String ?? ""
         reader.transactionPartnerIDOriginalLocation = args[KeyArgumentMethodChannel.transactionPartnerIDOriginalLocation] as? String ?? ""
         reader.isEnableCheckChipClone = args[KeyArgumentMethodChannel.isEnableCheckChipClone] as? Bool ?? false
-        reader.isEnableWaterMark = args[KeyArgumentMethodChannel.isEnableWaterMark] as? Bool ?? true
+        reader.isEnableWaterMark = args[KeyArgumentMethodChannel.isEnableWaterMark] as? Bool ?? false
         reader.isEnableAddIdCheckData = args[KeyArgumentMethodChannel.isEnableAddIdCheckData] as? Bool ?? false
         reader.isEnableUploadDG = args[KeyArgumentMethodChannel.isEnableUploadDG] as? Bool ?? false
         reader.isShowLogo = args[KeyArgumentMethodChannel.isShowLogo] as? Bool ?? true
@@ -369,7 +365,7 @@ public class FlutterPluginIcNfcPlugin: NSObject, FlutterPlugin {
     }
     
     private func sendJSONEncodingError(_ error: Error) {
-        pendingResult?(FlutterError(code: "JSON_ERROR",
+        pendingResult?(FlutterError(code: "IC_NFC_JSON_ERROR",
                                     message: error.localizedDescription,
                                     details: nil))
         pendingResult = nil

@@ -150,7 +150,7 @@ class _NfcScreenState extends State<NfcScreen> {
       );
       _navigate(await ICNfc.instance.qrToNfc(config));
     } on PlatformException catch (e) {
-      final error = ICNfcError.fromString(e.message ?? '');
+      final error = ICNFCError.fromString(e.message ?? '');
       _showError("${e.code} - ${error.description}");
     }
   }
@@ -171,8 +171,16 @@ class _NfcScreenState extends State<NfcScreen> {
       );
       _navigate(await ICNfc.instance.mrzToNfc(config));
     } on PlatformException catch (e) {
-      final error = ICNfcError.fromString(e.message ?? '');
-      _showError("${e.code} - ${error.description}");
+      if (e.code == ICNFCErrorType.cancelled.value) {
+        _showError("User cancelled at: ${e.message} step");
+      } else if (e.code == ICNFCErrorType.hasError.value) {
+        final errorType = ICNFCError.fromString(e.message ?? '');
+        _showError("Error detailed: ${errorType.description}");
+      } else if (e.code == ICNFCErrorType.invalidArgumentsPlugin.value) {
+        _showError(" Invalid arguments plugin ${e.message}");
+      } else if (e.code == ICNFCErrorType.jsonErrorPlugin.value) {
+        _showError("JSON error ${e.message}");
+      }
     }
   }
 
@@ -197,7 +205,7 @@ class _NfcScreenState extends State<NfcScreen> {
       );
       _navigate(await ICNfc.instance.onlyNfcWithUi(config));
     } on PlatformException catch (e) {
-      final error = ICNfcError.fromString(e.message ?? '');
+      final error = ICNFCError.fromString(e.message ?? '');
       _showError("${e.code} - ${error.description}");
     }
   }
@@ -238,7 +246,7 @@ class _NfcScreenState extends State<NfcScreen> {
 
   Future<void> _nfcWithoutUi() async {
     try {
-      // if (!_validateInputs()) return;
+      if (!_validateInputs()) return;
       final config = NfcPresets.manualWithoutUi(
         idNumber: _idCtrl.text.trim(),
         birthday: _dobCtrl.text.trim(),
@@ -250,11 +258,12 @@ class _NfcScreenState extends State<NfcScreen> {
         tokenIdEKYC: _tokenIdEKYC,
         tokenKeyEKYC: _tokenKeyEKYC,
         baseUrl: _baseUrl,
+        languageSdk: _language,
         numberTimesRetryScanNFC: _numberTimesRetryScanNFC,
       );
       _navigate(await ICNfc.instance.onlyNfcWithoutUi(config));
     } on PlatformException catch (e) {
-      final error = ICNfcError.fromString(e.message ?? '');
+      final error = ICNFCError.fromString(e.message ?? '');
       _showError("${e.code} - ${error.description}");
     }
   }

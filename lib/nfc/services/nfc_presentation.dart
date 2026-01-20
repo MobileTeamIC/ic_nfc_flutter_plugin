@@ -343,6 +343,7 @@ class NfcPresets {
     String baseUrl = '',
 
     // NFC reading options (không bao gồm các tùy chọn UI)
+    ICNfcLanguage languageSdk = ICNfcLanguage.icnfc_vi,
     bool isEnableUploadImage = false,
     bool isEnablePostcodeMatching = false,
     String inputClientSession = '',
@@ -388,6 +389,7 @@ class NfcPresets {
     tokenIdEKYC: tokenIdEKYC,
     tokenKeyEKYC: tokenKeyEKYC,
     baseUrl: baseUrl,
+    languageSdk: languageSdk,
     isEnableUploadImage: isEnableUploadImage,
     isEnablePostcodeMatching: isEnablePostcodeMatching,
     inputClientSession: inputClientSession,

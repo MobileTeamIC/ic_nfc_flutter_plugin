@@ -102,7 +102,27 @@ enum ICNFCReaderState {
   }
 }
 
-enum ICNfcError {
+enum ICNFCErrorType {
+  cancelled,
+  hasError,
+  invalidArgumentsPlugin,
+  jsonErrorPlugin;
+
+  String get value {
+    switch (this) {
+      case ICNFCErrorType.cancelled:
+        return 'IC_NFC_CANCELLED';
+      case ICNFCErrorType.hasError:
+        return 'IC_NFC_HAS_ERROR';
+      case ICNFCErrorType.invalidArgumentsPlugin:
+        return 'IC_NFC_INVALID_ARGUMENTS';
+      case ICNFCErrorType.jsonErrorPlugin:
+        return 'IC_NFC_JSON_ERROR';
+    }
+  }
+}
+
+enum ICNFCError {
   /// Đã xảy ra sự cố khi đọc thẻ
   responseError,
 
@@ -136,74 +156,74 @@ enum ICNfcError {
   /// Default unknown error
   unknown;
 
-  static ICNfcError fromString(String error) {
+  static ICNFCError fromString(String error) {
     switch (error) {
       case 'ResponseError':
       case 'READ_DATA_FAILURE':
-        return ICNfcError.responseError;
+        return ICNFCError.responseError;
       case 'Timeout':
       case 'TIME_OUT_START_READ_NFC':
       case 'TIME_OUT_NETWORK':
-        return ICNfcError.timeout;
+        return ICNFCError.timeout;
       case 'NFCNotSupported':
       case 'NOT_SUPPORT':
-        return ICNfcError.nfcNotSupported;
+        return ICNFCError.nfcNotSupported;
       case 'TagNotValid':
       case 'TAG_INVALID':
-        return ICNfcError.tagNotValid;
+        return ICNFCError.tagNotValid;
       case 'ConnectionError':
       case 'NOT_CONNECTED_CHIP':
       case 'FAILED_CONNECT_CHIP':
-        return ICNfcError.connectionError;
+        return ICNFCError.connectionError;
       case 'UserCanceled':
       case 'USER_CANCELED':
-        return ICNfcError.userCanceled;
+        return ICNFCError.userCanceled;
       case 'InvalidMRZKey':
       case 'DOCUMENT_NUMBER_INVALID':
       case 'DATE_OF_BIRTH_INVALID':
       case 'DATE_OF_EXPIRY_INVALID':
       case 'AUTHENTICATE_FAILURE':
-        return ICNfcError.invalidMRZKey;
+        return ICNFCError.invalidMRZKey;
       case 'MoreThanOneTagFound':
-        return ICNfcError.moreThanOneTagFound;
+        return ICNFCError.moreThanOneTagFound;
       case 'NoResponse':
-        return ICNfcError.noResponse;
+        return ICNFCError.noResponse;
       case 'NFCError':
       case 'NFC_OPTION_NULL':
       case 'DISABLE':
-        return ICNfcError.nfcError;
+        return ICNFCError.nfcError;
       default:
         // Attempt to match purely by string name if it matches an enum name exactly
         try {
-          return ICNfcError.values.firstWhere((e) => e.name == error);
+          return ICNFCError.values.firstWhere((e) => e.name == error);
         } catch (_) {
-          return ICNfcError.unknown;
+          return ICNFCError.unknown;
         }
     }
   }
 
   String get description {
     switch (this) {
-      case ICNfcError.responseError:
+      case ICNFCError.responseError:
         return 'An error occurred while reading the card';
-      case ICNfcError.timeout:
+      case ICNFCError.timeout:
         return 'Card reading session has timed out';
-      case ICNfcError.nfcNotSupported:
+      case ICNFCError.nfcNotSupported:
         return 'Device does not support NFC or NFC is unavailable';
-      case ICNfcError.tagNotValid:
+      case ICNFCError.tagNotValid:
         return 'Invalid card tag';
-      case ICNfcError.connectionError:
+      case ICNFCError.connectionError:
         return 'Connection error';
-      case ICNfcError.userCanceled:
+      case ICNFCError.userCanceled:
         return 'User canceled the operation';
-      case ICNfcError.invalidMRZKey:
+      case ICNFCError.invalidMRZKey:
         return 'Invalid MRZ key or authentication failed';
-      case ICNfcError.moreThanOneTagFound:
+      case ICNFCError.moreThanOneTagFound:
         return 'More than one card found';
-      case ICNfcError.noResponse:
+      case ICNFCError.noResponse:
         return 'No response from card';
-      case ICNfcError.nfcError:
-      case ICNfcError.unknown:
+      case ICNFCError.nfcError:
+      case ICNFCError.unknown:
         return 'Unknown error or general NFC error';
     }
   }
