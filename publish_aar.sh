@@ -10,7 +10,7 @@ MAVEN_LOCAL="$PLUGIN_DIR/android/libs-maven-local"
 
 # groupId|artifactId|version|aarFileName
 DEPENDENCIES=(
-  "com.vnpt.flutter_plugin_ic_nfc|vnpt-nfc-sdk|1.8.0|vnpt_nfc_sdk-release-v1.8.0.aar"
+  "com.vnpt.flutter_plugin_ic_nfc|vnpt-nfc-sdk|1.8.0|vnpt_nfc_sdk-release-v1.8.2.aar"
   "com.vnpt.flutter_plugin_ic_nfc|scanqr-ic-sdk|1.0.6|scanqr_ic_sdk-release-v1.0.6.aar"
 )
 

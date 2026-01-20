@@ -34,54 +34,12 @@ class _NfcScreenState extends State<NfcScreen> {
   ICNfcLanguage _language = ICNfcLanguage.icnfc_vi;
   ModeButtonHeaderBar _modeButtonHeaderBar = ModeButtonHeaderBar.leftButton;
   bool _isShowLogo = false;
-
-  // Stream subscription for NFC events
-  StreamSubscription<NfcReaderEvent>? _nfcEventSubscription;
+  int _numberTimesRetryScanNFC = 3;
 
   @override
   void initState() {
     super.initState();
     loadData();
-    _startListeningToNfcEvents();
-  }
-
-  /// Start listening to NFC reader state events
-  void _startListeningToNfcEvents() {
-    _nfcEventSubscription = ICNfc.instance.nfcReaderStateStream.listen(
-      (event) {
-        // Print event to console
-        print('═══════════════════════════════════════');
-        print('NFC Event Received:');
-        print('   State: ${event.state}');
-        print('   Progress: ${event.progress}%');
-        if (event.error.isNotEmpty) {
-          print('   Error: ${event.error}');
-        }
-        print('═══════════════════════════════════════');
-
-        // Handle different states
-        switch (event.state) {
-          case ICNFCReaderState.started:
-            print('✅ NFC Reader Started - Waiting for card...');
-            break;
-          case ICNFCReaderState.didDetect:
-            print('✅ NFC Card Detected!');
-            break;
-          case ICNFCReaderState.reading:
-            print('✅ Reading NFC Card... ${event.progress}%');
-            break;
-          case ICNFCReaderState.didError:
-            print('❌ NFC Error: ${event.error}');
-            break;
-          case ICNFCReaderState.completed:
-            print('✅ NFC Reading Completed!');
-            break;
-        }
-      },
-      onError: (error) {
-        print('❌ NFC Stream Error: $error');
-      },
-    );
   }
 
   void loadData() {
@@ -133,6 +91,11 @@ class _NfcScreenState extends State<NfcScreen> {
       SharedPreferenceKeys.isShowLogo,
       defaultValue: false,
     );
+    _numberTimesRetryScanNFC =
+        SharedPreferenceService.instance.getInt(
+          SharedPreferenceKeys.numberTimesRetryScanNFC,
+        ) ??
+        3;
   }
 
   /// ----------------------------
@@ -187,7 +150,8 @@ class _NfcScreenState extends State<NfcScreen> {
       );
       _navigate(await ICNfc.instance.qrToNfc(config));
     } on PlatformException catch (e) {
-      _showError("${e.code} - ${e.message}");
+      final error = ICNfcError.fromString(e.message ?? '');
+      _showError("${e.code} - ${error.description}");
     }
   }
 
@@ -207,7 +171,8 @@ class _NfcScreenState extends State<NfcScreen> {
       );
       _navigate(await ICNfc.instance.mrzToNfc(config));
     } on PlatformException catch (e) {
-      _showError("${e.code} - ${e.message}");
+      final error = ICNfcError.fromString(e.message ?? '');
+      _showError("${e.code} - ${error.description}");
     }
   }
 
@@ -232,7 +197,8 @@ class _NfcScreenState extends State<NfcScreen> {
       );
       _navigate(await ICNfc.instance.onlyNfcWithUi(config));
     } on PlatformException catch (e) {
-      _showError("${e.code} - ${e.message}");
+      final error = ICNfcError.fromString(e.message ?? '');
+      _showError("${e.code} - ${error.description}");
     }
   }
 
@@ -244,7 +210,26 @@ class _NfcScreenState extends State<NfcScreen> {
           idCtrl: _idCtrl,
           dobCtrl: _dobCtrl,
           expCtrl: _expCtrl,
-          onConfirm: () => isWithUI ? _nfcWithUi() : _nfcWithoutUi(),
+          onConfirm: () {
+            SharedPreferenceService.instance.setString(
+              SharedPreferenceKeys.idNumber,
+              _idCtrl.text.trim(),
+            );
+            SharedPreferenceService.instance.setString(
+              SharedPreferenceKeys.birthday,
+              _dobCtrl.text.trim(),
+            );
+            SharedPreferenceService.instance.setString(
+              SharedPreferenceKeys.expiredDate,
+              _expCtrl.text.trim(),
+            );
+
+            if (isWithUI) {
+              _nfcWithUi();
+            } else {
+              _nfcWithoutUi();
+            }
+          },
           onCancel: () => Navigator.pop(context),
         );
       },
@@ -253,7 +238,7 @@ class _NfcScreenState extends State<NfcScreen> {
 
   Future<void> _nfcWithoutUi() async {
     try {
-      if (!_validateInputs()) return;
+      // if (!_validateInputs()) return;
       final config = NfcPresets.manualWithoutUi(
         idNumber: _idCtrl.text.trim(),
         birthday: _dobCtrl.text.trim(),
@@ -265,13 +250,12 @@ class _NfcScreenState extends State<NfcScreen> {
         tokenIdEKYC: _tokenIdEKYC,
         tokenKeyEKYC: _tokenKeyEKYC,
         baseUrl: _baseUrl,
-        languageSdk: _language,
-        modeButtonHeaderBar: _modeButtonHeaderBar,
-        isShowLogo: _isShowLogo,
+        numberTimesRetryScanNFC: _numberTimesRetryScanNFC,
       );
       _navigate(await ICNfc.instance.onlyNfcWithoutUi(config));
     } on PlatformException catch (e) {
-      _showError("${e.code} - ${e.message}");
+      final error = ICNfcError.fromString(e.message ?? '');
+      _showError("${e.code} - ${error.description}");
     }
   }
 
@@ -288,8 +272,6 @@ class _NfcScreenState extends State<NfcScreen> {
 
   @override
   void dispose() {
-    // Cancel stream subscription to prevent memory leaks
-    _nfcEventSubscription?.cancel();
     _idCtrl.dispose();
     _dobCtrl.dispose();
     _expCtrl.dispose();

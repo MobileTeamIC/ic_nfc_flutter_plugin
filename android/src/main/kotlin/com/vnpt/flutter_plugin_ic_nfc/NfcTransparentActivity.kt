@@ -62,25 +62,16 @@ class NfcTransparentActivity : AppCompatActivity() {
 
              override fun onError(message: NfcError?) {
                  val intent = Intent()
-                 val gson = Gson()
-                 val errorString = if (message != null) {
-                     gson.toJson(message)
-                 } else {
-                     "{\"errorCode\": \"CANCELLED\", \"errorMessage\": \"Unknown/User Cancelled\"}"
-                 }
+                 val errorCode = "IC_NFC_HAS_ERROR"
+                 val errorMessage = message?.name ?: ""
 
-                 intent.putExtra(NFC_ERROR, "User Cancelled")
-                 intent.putExtra(NFC_CODE, errorString)
+                 intent.putExtra(NFC_ERROR, errorCode)
+                 intent.putExtra(NFC_CODE, errorMessage)
                  setResult(RESULT_CANCELED, intent)
                  finish()
              }
          }
       )
-   }
-
-   override fun onNewIntent(intent: Intent?) {
-      super.onNewIntent(intent)
-      nfcTool?.handleIntent(intent)
    }
 
    override fun onDestroy() {

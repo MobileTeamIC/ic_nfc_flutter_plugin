@@ -2,14 +2,12 @@ import Flutter
 import UIKit
 import ICNFCCardReader
 
-public class FlutterPluginIcNfcPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
+public class FlutterPluginIcNfcPlugin: NSObject, FlutterPlugin {
     private enum Channel {
-        static let method = "flutter.sdk.ic.nfc/integrate"
-        static let event = "flutter.sdk.ic.nfc/events"
+        static let name = "flutter.sdk.ic.nfc/integrate"
     }
     
     private var pendingResult: FlutterResult?
-    private var eventSink: FlutterEventSink?
     
     private var flutterViewController: UIViewController? {
         var keyWindow: UIWindow?
@@ -35,18 +33,11 @@ public class FlutterPluginIcNfcPlugin: NSObject, FlutterPlugin, FlutterStreamHan
     }
     
     public static func register(with registrar: FlutterPluginRegistrar) {
+        let channel = FlutterMethodChannel(name: Channel.name, binaryMessenger: registrar.messenger())
         let instance = FlutterPluginIcNfcPlugin()
-        
-        // Register MethodChannel for request-response operations
-        let methodChannel = FlutterMethodChannel(name: Channel.method, binaryMessenger: registrar.messenger())
-        registrar.addMethodCallDelegate(instance, channel: methodChannel)
-        
-        // Register EventChannel for streaming NFC state events
-        let eventChannel = FlutterEventChannel(name: Channel.event, binaryMessenger: registrar.messenger())
-        eventChannel.setStreamHandler(instance)
-        
-        // Setup background transparent
-        DispatchQueue.main.async {
+        registrar.addMethodCallDelegate(instance, channel: channel)
+
+         DispatchQueue.main.async {
             var keyWindow: UIWindow?
             if #available(iOS 13.0, *) {
                 keyWindow = UIApplication.shared.connectedScenes
@@ -67,7 +58,7 @@ public class FlutterPluginIcNfcPlugin: NSObject, FlutterPlugin, FlutterStreamHan
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         guard let controller = flutterViewController else {
-            result(FlutterError(code: "NO_VIEW_CONTROLLER",
+            result(FlutterError(code: "IC_NFC_NO_VIEW_CONTROLLER",
                                 message: "Unable to locate root view controller",
                                 details: nil))
             return
@@ -364,14 +355,14 @@ public class FlutterPluginIcNfcPlugin: NSObject, FlutterPlugin, FlutterStreamHan
     }
     
     private func sendUnsupportedVersionError() {
-        pendingResult?(FlutterError(code: "UNSUPPORTED_VERSION",
+        pendingResult?(FlutterError(code: "IC_NFC_UNSUPPORTED_VERSION",
                                     message: "This feature requires iOS 13.0 or higher.",
                                     details: nil))
         pendingResult = nil
     }
     
     private func sendInvalidArgumentsError(_ message: String) {
-        pendingResult?(FlutterError(code: "INVALID_ARGUMENTS",
+        pendingResult?(FlutterError(code: "IC_NFC_INVALID_ARGUMENTS",
                                     message: message,
                                     details: nil))
         pendingResult = nil
@@ -415,7 +406,7 @@ extension FlutterPluginIcNfcPlugin: ICMainNFCReaderDelegate {
             stepName = "Unknown Step"
         }
         
-        pendingResult?(FlutterError(code: "CANCELLED",
+        pendingResult?(FlutterError(code: "IC_NFC_CANCELLED",
                                     message: "User closed NFC SDK at step: \(stepName)",
                                     details: ["lastStep": stepName]))
         pendingResult = nil
@@ -465,40 +456,27 @@ extension FlutterPluginIcNfcPlugin: ICMainNFCReaderDelegate {
         }
     }
     
+    /**
+     * - ResponseError: Problem reading card
+     * - Timeout: Session timed out
+     * - NFCNotSupported: Device does not support NFC
+     * - TagNotValid: Invalid tag
+     * - ConnectionError: Connection error
+     * - InvalidMRZKey: Invalid MRZ key
+     * - MoreThanOneTagFound: More than one tag found
+     * - NoResponse: No response from card
+     */
     public func icNFCCardReader(_ state: ICNFCReaderState, progress: Int, error: String) {
         print("NFC State: \(state), Progress: \(progress)%, Error: \(error) - end log NFC State")
-        
-        // Stream events to Flutter
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self, let sink = self.eventSink else { return }
-            
-            let event: [String: Any] = [
-                "state": state.rawValue,
-                "progress": progress,
-                "error": error
-            ]
-            
-            sink(event)
+        if state == ICNFCDidError {
+            pendingResult?(FlutterError(code: "IC_NFC_HAS_ERROR",
+                                        message: error,
+                                        details: ["":""]))
+           pendingResult = nil
         }
     }
     
     public func icNFCPopupReaderChipDisappear() {
         print("NFC popup disappeared")
-    }
-}
-
-// MARK: - FlutterStreamHandler
-extension FlutterPluginIcNfcPlugin {
-    
-    /// Called when Flutter starts listening to the event stream
-    public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
-        self.eventSink = events
-        return nil
-    }
-    
-    /// Called when Flutter stops listening to the event stream
-    public func onCancel(withArguments arguments: Any?) -> FlutterError? {
-        self.eventSink = nil
-        return nil
     }
 }

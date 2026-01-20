@@ -6,7 +6,7 @@
 	<dict>
 		<key>Assets.car</key>
 		<data>
-		zu+Vz6qOHNZGM0nDhwpVnbSwFLw=
+		is4iQn5ZR+dEhgELgOAV8Hd5YS4=
 		</data>
 		<key>Headers/ICMainNFCReaderInteractor.h</key>
 		<data>
@@ -186,7 +186,7 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		sbfpf+6ThgEZj0cCX8TA88Xqa/s=
+		iwfjPIplbPPoFD7uarEJVLn6M8Y=
 		</data>
 		<key>Modules/ICNFCCardReader.swiftmodule/x86_64-apple-ios-simulator.abi.json</key>
 		<data>
@@ -194,19 +194,19 @@
 		</data>
 		<key>Modules/ICNFCCardReader.swiftmodule/x86_64-apple-ios-simulator.private.swiftinterface</key>
 		<data>
-		34BU2wx401CQPPMgmmJbQbTSRlY=
+		6WYj+mPYx2RpqkEvboeewvIn6HI=
 		</data>
 		<key>Modules/ICNFCCardReader.swiftmodule/x86_64-apple-ios-simulator.swiftdoc</key>
 		<data>
-		r05msQmCmmv4/Hi6BYXk1Ie0D+M=
+		wS/r5O732c7+7Vn8XEHm3S80aNw=
 		</data>
 		<key>Modules/ICNFCCardReader.swiftmodule/x86_64-apple-ios-simulator.swiftinterface</key>
 		<data>
-		34BU2wx401CQPPMgmmJbQbTSRlY=
+		6WYj+mPYx2RpqkEvboeewvIn6HI=
 		</data>
 		<key>Modules/ICNFCCardReader.swiftmodule/x86_64-apple-ios-simulator.swiftmodule</key>
 		<data>
-		44hg0d8x6L74lskC6oMP6/pJDVM=
+		C/4YeFZF1X9mgjNPC5LfC18AtSA=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -269,7 +269,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			WQNyiz3ROCfmBt/rTIITbgdprajpVgcqxhUXTfPfkX0=
+			Rx1N/JJglzymSlMWEsZ1HRNMYib5bXdVLOyMT5Dp8cE=
 			</data>
 		</dict>
 		<key>Headers/ICMainNFCReaderInteractor.h</key>
@@ -591,28 +591,28 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			QuKP4OA3xQgojGTP2gQAsEGmOJwVKJvhtEuXj3x4OVc=
+			mOBvFrmjO7iQ34peyy66E84csSWTyc4lHsfYzYP/lX4=
 			</data>
 		</dict>
 		<key>Modules/ICNFCCardReader.swiftmodule/x86_64-apple-ios-simulator.swiftdoc</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			x/qUU2GVuhRLP4FI+QkD+1Mj2Nesan0eo0ON7OKzE54=
+			mSKwcO77x2ZJJeu+EToh9vy9PMN/U4a/dsWZljsiwes=
 			</data>
 		</dict>
 		<key>Modules/ICNFCCardReader.swiftmodule/x86_64-apple-ios-simulator.swiftinterface</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			QuKP4OA3xQgojGTP2gQAsEGmOJwVKJvhtEuXj3x4OVc=
+			mOBvFrmjO7iQ34peyy66E84csSWTyc4lHsfYzYP/lX4=
 			</data>
 		</dict>
 		<key>Modules/ICNFCCardReader.swiftmodule/x86_64-apple-ios-simulator.swiftmodule</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			PH5mazhd5Bors24hRBDUxAtYFK8yQkiBl16wWQhEmcI=
+			7EnAHM0thrphdTPPpgM4mIdcJN0uwaL3X9Bp2XoFPw0=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>

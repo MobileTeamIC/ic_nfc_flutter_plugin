@@ -6,4 +6,3 @@ export 'nfc/services/nfc_config.dart';
 export 'nfc/services/nfc_method_channel.dart';
 export 'nfc/services/nfc_presentation.dart';
 export 'nfc/services/nfc_key_result.dart';
-export 'nfc/services/nfc_event_channel.dart';

@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Service class để quản lý SharedPreferences
 /// Cung cấp các phương thức để lưu và đọc dữ liệu local
 class SharedPreferenceService {
-    SharedPreferenceService();
+  SharedPreferenceService();
 
   static final SharedPreferenceService _instance = SharedPreferenceService();
 
@@ -14,7 +14,6 @@ class SharedPreferenceService {
   static void init(SharedPreferences sharedPreferences) {
     _sharedPreferences = sharedPreferences;
   }
-
 
   /// Lưu String
   Future<bool> setString(String key, String value) async {
@@ -78,7 +77,7 @@ class SharedPreferenceService {
 
   /// Kiểm tra key có tồn tại không
   bool containsKey(String key) {
-      return _sharedPreferences.containsKey(key);
+    return _sharedPreferences.containsKey(key);
   }
 
   /// Lấy tất cả các keys
@@ -108,4 +107,5 @@ class SharedPreferenceKeys {
 
   static const String modeButtonHeaderBar = 'mode_button_header_bar';
   static const String isShowLogo = 'is_show_logo';
+  static const String numberTimesRetryScanNFC = 'number_times_retry_scan_nfc';
 }

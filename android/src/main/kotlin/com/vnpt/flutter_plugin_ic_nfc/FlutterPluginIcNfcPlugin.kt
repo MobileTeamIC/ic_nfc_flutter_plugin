@@ -334,34 +334,28 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
         }
     }
 
-    // Hàm helper để put postcode value vào JSONObject (parse JSON string thành Map nếu cần)
     private fun JSONObject.putResult(key: String, jsonString: String?) {
         if (jsonString.isNullOrBlank()) return
 
         val parsedValue = parseJsonStringToMap(jsonString)
         when (parsedValue) {
             is Map<*, *> -> {
-                // Nếu là Map, chuyển thành JSONObject
                 try {
                     put(key, JSONObject(parsedValue as Map<String, Any>))
                 } catch (e: Exception) {
-                    // Nếu chuyển đổi thất bại, giữ nguyên string
                     putSafe(key, jsonString)
                 }
             }
 
             is List<*> -> {
-                // Nếu là List, chuyển thành JSONArray
                 try {
                     put(key, JSONArray(parsedValue as List<Any>))
                 } catch (e: Exception) {
-                    // Nếu chuyển đổi thất bại, giữ nguyên string
                     putSafe(key, jsonString)
                 }
             }
 
             else -> {
-                // Nếu không phải Map hoặc List, giữ nguyên string
                 putSafe(key, jsonString)
             }
         }
@@ -511,10 +505,10 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
                                 }.toString()
                             )
                         } else {
-                            pendingResult.error("CANCELLED", "User canceled the operation", null)
+                            pendingResult.error("IC_NFC_CANCELLED", "User canceled the operation", null)
                         }
                     } else {
-                        pendingResult.error("CANCELLED", "User canceled the operation", null)
+                        pendingResult.error("IC_NFC_HAS_ERROR", "Has error nfc reader", null)
                     }
                 }
             } else if (requestCode == NFC_NO_GUIDE_REQUEST_CODE) {
@@ -533,6 +527,10 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
                                         resultObj.clientSessionNfc
                                     )
                                     putResult(
+                                        KeyResultConstantsNFC.DATA_GROUPS_RESULT,
+                                        resultObj.dataGroupsResult
+                                    )
+                                    putResult(
                                         KeyResultConstantsNFC.DATA_NFC_RESULT,
                                         resultObj.logNfcResult
                                     )
@@ -548,13 +546,23 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
                                         KeyResultConstantsNFC.STATUS_CHIP_AUTHENTICATION,
                                         resultObj.statusChipAuthentication
                                     )
+                                    putResult(
+                                        KeyResultConstantsNFC.PATH_IMAGE_AVATAR,
+                                        resultObj.imgFaceCardPath
+                                    )
+                                    putResult(
+                                        KeyResultConstantsNFC.HASH_IMAGE_AVATAR,
+                                        resultObj.hashAvatar
+                                    )
                                 }.toString()
                             )
                         } ?: run {
                             pendingResult.success(JSONObject().toString())
                         }
                     } else {
-                        pendingResult.error("CANCELED", "User canceled the operation", null)
+                        val errorCode = "IC_NFC_HAS_ERROR"
+                        val errorMessage = data?.getStringExtra(NfcTransparentActivity.NFC_CODE) ?: ""
+                        pendingResult.error(errorCode, errorMessage, null)
                     }
                 }
             }

@@ -23,6 +23,8 @@ class _SettingScreenState extends State<SettingScreen> {
   final TextEditingController _tokenKeyEKYCController = TextEditingController();
   final TextEditingController _accessTokenEKYCController =
       TextEditingController();
+  final TextEditingController _numberTimesRetryScanNFCController =
+      TextEditingController();
   bool _isLoading = false;
 
   ICNfcLanguage _languageMode = ICNfcLanguage.icnfc_vi;
@@ -75,6 +77,12 @@ class _SettingScreenState extends State<SettingScreen> {
       SharedPreferenceKeys.isShowLogo,
       defaultValue: false,
     );
+    _numberTimesRetryScanNFCController.text =
+        (SharedPreferenceService.instance.getInt(
+                  SharedPreferenceKeys.numberTimesRetryScanNFC,
+                ) ??
+                3)
+            .toString();
   }
 
   @override
@@ -86,6 +94,7 @@ class _SettingScreenState extends State<SettingScreen> {
     _tokenIdEKYCController.dispose();
     _tokenKeyEKYCController.dispose();
     _accessTokenEKYCController.dispose();
+    _numberTimesRetryScanNFCController.dispose();
     super.dispose();
   }
 
@@ -138,6 +147,10 @@ class _SettingScreenState extends State<SettingScreen> {
         SharedPreferenceService.instance.setBool(
           SharedPreferenceKeys.isShowLogo,
           _isShowLogo,
+        ),
+        SharedPreferenceService.instance.setInt(
+          SharedPreferenceKeys.numberTimesRetryScanNFC,
+          int.tryParse(_numberTimesRetryScanNFCController.text.trim()) ?? 3,
         ),
       ]);
 
@@ -238,9 +251,18 @@ class _SettingScreenState extends State<SettingScreen> {
                           'Ngôn ngữ',
                           ShadSelect<String>(
                             selectedOptionBuilder:
-                                (context, value) => Text(value == ICNfcLanguage.icnfc_vi.name ? 'Tiếng Việt' : 'Tiếng Anh'),
+                                (context, value) => Text(
+                                  value == ICNfcLanguage.icnfc_vi.name
+                                      ? 'Tiếng Việt'
+                                      : 'Tiếng Anh',
+                                ),
                             placeholder: const Text(' Chọn Ngôn ngữ'),
-                            onChanged: (value) => setState(() => _languageMode = ICNfcLanguage.values.firstWhere((e) => e.name == value)),
+                            onChanged:
+                                (value) => setState(
+                                  () =>
+                                      _languageMode = ICNfcLanguage.values
+                                          .firstWhere((e) => e.name == value),
+                                ),
                             initialValue: _languageMode.name,
                             options: [
                               ShadOption(
@@ -255,7 +277,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           ),
                         ),
 
-                         // Base URL
+                        // Base URL
                         _titleAndTextFormField(
                           id: 'base_url',
                           title: 'Base URL',
@@ -263,7 +285,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           controller: _baseUrlController,
                         ),
 
-                          // access token
+                        // access token
                         _titleAndTextFormField(
                           id: 'access_token',
                           title: 'Access Token',
@@ -271,7 +293,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           controller: _accessTokenController,
                           isTextArea: true,
                         ),
-                      
+
                         // Token ID
                         _titleAndTextFormField(
                           id: 'token_id',
@@ -296,8 +318,6 @@ class _SettingScreenState extends State<SettingScreen> {
                           controller: _accessTokenEKYCController,
                         ),
 
-                       
-
                         // tokenIdEKYC
                         _titleAndTextFormField(
                           id: 'token_id_ekyc',
@@ -312,6 +332,14 @@ class _SettingScreenState extends State<SettingScreen> {
                           title: 'Token Key EKYC',
                           placeholder: 'Nhập Token Key EKYC',
                           controller: _tokenKeyEKYCController,
+                        ),
+
+                        // numberTimesRetryScanNFC
+                        _titleAndNumberFormField(
+                          id: 'number_times_retry_scan_nfc',
+                          title: 'Số lần thử lại quét NFC',
+                          placeholder: 'Nhập số lần thử lại (mặc định: 3)',
+                          controller: _numberTimesRetryScanNFCController,
                         ),
                       ],
                     ),
@@ -417,6 +445,22 @@ class _SettingScreenState extends State<SettingScreen> {
         Text(title, style: Theme.of(context).textTheme.titleSmall),
         widget,
       ],
+    );
+  }
+
+  _titleAndNumberFormField({
+    required String id,
+    required String title,
+    required String placeholder,
+    required TextEditingController controller,
+  }) {
+    return ShadInputFormField(
+      id: id,
+      label: Text(title),
+      placeholder: Text(placeholder),
+      controller: controller,
+      keyboardType: TextInputType.number,
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
     );
   }
 
