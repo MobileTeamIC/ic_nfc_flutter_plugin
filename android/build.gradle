@@ -61,11 +61,11 @@ android {
     }
 
     dependencies {
-        implementation "com.vnpt.flutter_plugin_ic_nfc:vnpt-nfc-sdk:1.8.2"
-        implementation 'com.vnpt.flutter_plugin_ic_nfc:scanqr-ic-sdk:1.0.6'
+        // implementation "com.vnpt.flutter_plugin_ic_nfc:vnpt-nfc-sdk:1.8.2"
+        // implementation 'com.vnpt.flutter_plugin_ic_nfc:scanqr-ic-sdk:1.0.6'
 
-        //  compileOnly files('libs/vnpt_nfc_sdk-release-v1.8.2.aar')
-        //  compileOnly files('libs/scanqr_ic_sdk-release-v1.0.6.aar')
+        compileOnly files('libs/vnpt_nfc_sdk-release-v1.8.2.aar')
+        compileOnly files('libs/scanqr_ic_sdk-release-v1.0.6.aar')
 
 //        implementation files('libs/vnpt_nfc_sdk-release-v1.8.2.aar')
 //        implementation files('libs/scanqr_ic_sdk-release-v1.0.6.aar')
