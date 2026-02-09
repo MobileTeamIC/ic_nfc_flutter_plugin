@@ -18,19 +18,10 @@ A new Flutter plugin project.
   s.dependency 'OpenSSL-Universal', '~> 3.3.3001'
   s.platform = :ios, '13.0'
 
-  # --- CẤU HÌNH FRAMEWORK (Quan trọng) ---
-  
-  # Khai báo cả 2 framework nằm trong thư mục SDK
-  # Lưu ý: Thư mục 'SDK' phải nằm ngang hàng với file .podspec này
-  s.vendored_frameworks = 'SDK/ICNFCCardReader.xcframework', "SDK/OpenSSL.xcframework"
+  s.vendored_frameworks = 'SDK/ICNFCCardReader.xcframework'
+  s.preserve_paths = 'SDK/ICNFCCardReader.xcframework/**/*'
 
-  # Giữ lại các file này để pod không tự động dọn dẹp
-  s.preserve_paths = 'SDK/ICNFCCardReader.xcframework/**/*', 'SDK/OpenSSL.xcframework/**/*'
-
-  # --- CẤU HÌNH BUILD ---
-  
-  # Flutter.framework does not contain a i386 slice.
-  s.pod_target_xcconfig = { 
+  s.pod_target_xcconfig = {
     'DEFINES_MODULE' => 'YES', 
     'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386',
   }
