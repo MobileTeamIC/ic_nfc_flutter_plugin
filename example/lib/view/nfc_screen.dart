@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_plugin_ic_nfc_example/service/shared_preference.dart';
 import 'package:flutter_plugin_ic_nfc_example/view/log_screen.dart';
 import 'package:flutter_plugin_ic_nfc_example/view/setting_screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:flutter_plugin_ic_nfc_example/view/nfc_test_screen.dart';
 
 import '../theme/context.dart';
 
@@ -338,6 +340,7 @@ class _NfcScreenState extends State<NfcScreen> {
                 description2: "Đọc thông tin từ chip NFC",
                 onTap: () async => _showInputDOBAndExpiredDateDialog(),
               ),
+
               _ActionCard(
                 icon: Icons.nfc_rounded,
                 title: "Nhập thông tin -> Đọc chip NFC tại ứng dụng",
@@ -348,8 +351,29 @@ class _NfcScreenState extends State<NfcScreen> {
                     () async =>
                         _showInputDOBAndExpiredDateDialog(isWithUI: false),
               ),
+              Platform.isAndroid ? _ActionCard(
+                icon: Icons.settings_remote,
+                title: "Test flow NFC",
+                description1: "Giả lập flow lỗi bên KH, hãy tắt chức năng NFC trên điện thoại trước khi thực hiện test chức năng này",
+                description2: "Vào chức năng này để kiểm tra flow",
+                onTap: () async => _startNfcCheckFlow(),
+              ) : SizedBox.shrink(),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _startNfcCheckFlow() async {
+     Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => NfcTestScreen(
+          onNfcEnabled: () {
+             Navigator.pop(context); // Close test screen
+            _qrToNfc();
+          },
         ),
       ),
     );

@@ -33,3 +33,10 @@ và project này tuân theo [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dart SDK: ^3.7.2
 - Android minSdk: 21
 - iOS: 12.0+
+
+## [1.0.1] - 2026-02-12
+
+### Update
+ - Using pod 'OpenSSL-Universal', '~> 3.3.3001'
+ - Remove SDK OpenSSL preserver path in podspec
+ - Update  SDK android version to 1.8.3
