@@ -40,3 +40,8 @@ và project này tuân theo [Semantic Versioning](https://semver.org/spec/v2.0.0
  - Using pod 'OpenSSL-Universal', '~> 3.3.3001'
  - Remove SDK OpenSSL preserver path in podspec
  - Update  SDK android version to 1.8.3
+
+## [1.0.2] - 2026-02-25
+
+### Update
+  - Revert OpenSSL using fix SDK 3.3.3001
