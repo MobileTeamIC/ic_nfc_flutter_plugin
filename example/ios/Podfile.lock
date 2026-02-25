@@ -4,12 +4,10 @@ PODS:
   - Flutter (1.0.0)
   - flutter_plugin_ic_nfc (1.0.0):
     - Flutter
-    - OpenSSL-Universal (~> 3.3.3001)
   - integration_test (0.0.1):
     - Flutter
   - nfc_manager (0.0.1):
     - Flutter
-  - OpenSSL-Universal (3.3.3001)
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -25,10 +23,6 @@ DEPENDENCIES:
   - nfc_manager (from `.symlinks/plugins/nfc_manager/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
-
-SPEC REPOS:
-  trunk:
-    - OpenSSL-Universal
 
 EXTERNAL SOURCES:
   app_settings:
@@ -49,10 +43,9 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   app_settings: 0341ec6daa4f0c50f5a421bf0ad7c36084db6e90
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
-  flutter_plugin_ic_nfc: 36c2b50778c8d2873451e474296e34f414a122d1
+  flutter_plugin_ic_nfc: 093a77492534d106986f49cc90edcc13e8434e0d
   integration_test: 4a889634ef21a45d28d50d622cf412dc6d9f586e
   nfc_manager: f6d5609c09b4640b914a3dc67479a2e392965fd0
-  OpenSSL-Universal: 6082b0bf950e5636fe0d78def171184e2b3899c2
   path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
   shared_preferences_foundation: 9e1978ff2562383bd5676f64ec4e9aa8fa06a6f7
 
