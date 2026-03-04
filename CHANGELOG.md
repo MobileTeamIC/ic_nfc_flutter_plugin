@@ -45,3 +45,44 @@ và project này tuân theo [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Update
   - Revert OpenSSL using fix SDK 3.3.3001
+
+## [1.0.3] - 2026-03-04
+
+### Update
+  - Add loadingColor option
+  - Add chipDisappear event
+  - Update onlyNfcWithoutUi to accept BuildContext
+  Sample: 
+  ```dart
+     Future<void> _nfcWithoutUi() async {
+    try {
+      if (!_validateInputs()) return;
+
+      final config = NfcPresets.manualWithoutUi(
+        idNumber: _idCtrl.text.trim(),
+        birthday: _dobCtrl.text.trim(),
+        expiredDate: _expCtrl.text.trim(),
+        accessToken: _accessToken,
+        tokenId: _tokenId,
+        tokenKey: _tokenKey,
+        accessTokenEKYC: _accessTokenEKYC,
+        tokenIdEKYC: _tokenIdEKYC,
+        tokenKeyEKYC: _tokenKeyEKYC,
+        baseUrl: _baseUrl,
+        languageSdk: _language,
+        numberTimesRetryScanNFC: _numberTimesRetryScanNFC,
+        loadingColor: "#ffffff",
+      );
+
+      final result = await ICNfc.instance.onlyNfcWithoutUi(
+        context,
+        config,
+      );
+       _navigate(result);
+    } on PlatformException catch (e) {
+      final error = ICNFCError.fromString(e.message ?? '');
+      _showError("${e.code} - ${error.description}");
+    }
+  }
+  ```
+  
