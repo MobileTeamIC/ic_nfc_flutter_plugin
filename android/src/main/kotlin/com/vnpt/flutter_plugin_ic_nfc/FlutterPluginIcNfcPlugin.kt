@@ -5,6 +5,7 @@ import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Context.NFC_SERVICE
 import android.content.Intent
+import android.graphics.Color
 import android.nfc.NfcManager
 import com.google.gson.Gson
 import com.vnptit.nfc.activity.VnptScanNFCActivity
@@ -23,6 +24,7 @@ import io.flutter.plugin.common.PluginRegistry
 import org.json.JSONArray
 import org.json.JSONObject
 import kotlin.jvm.java
+import androidx.core.graphics.toColorInt
 
 /** FlutterPluginIcNfcPlugin */
 class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
@@ -50,6 +52,12 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
                 KeyIntentConstantsNFC.EXPIRED_DATE_CARD,
                 json.optString(KeyArgumentMethodChannel.EXPIRED_DATE, "")
             )
+
+            intent.putExtra(
+                KeyIntentConstantsNFC.EFFECT_COLOR_NOTICE_VALID,
+                parseHexColor(json.optString(KeyArgumentMethodChannel.LOADING_COLOR, ""))
+            )
+
             /**
              * Truyền chế độ đọc thẻ
              */
@@ -262,6 +270,14 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
             return it
         }
 
+        private fun parseHexColor(hex: String): Int? {
+            return try {
+                hex.toColorInt()
+            } catch (_: Exception) {
+                null
+            }
+        }
+
         private fun mapLanguage(value: String?): SDKEnumNFC.LanguageEnum {
             return when (value?.lowercase()) {
                 "icnfc_en" -> SDKEnumNFC.LanguageEnum.ENGLISH
@@ -333,6 +349,8 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
             }
         }
     }
+
+
 
     private fun JSONObject.putResult(key: String, jsonString: String?) {
         if (jsonString.isNullOrBlank()) return

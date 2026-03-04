@@ -8,6 +8,7 @@ public class FlutterPluginIcNfcPlugin: NSObject, FlutterPlugin {
     }
     
     private var pendingResult: FlutterResult?
+    private var channel: FlutterMethodChannel?
     
     private var flutterViewController: UIViewController? {
         var keyWindow: UIWindow?
@@ -35,6 +36,7 @@ public class FlutterPluginIcNfcPlugin: NSObject, FlutterPlugin {
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: Channel.name, binaryMessenger: registrar.messenger())
         let instance = FlutterPluginIcNfcPlugin()
+        instance.channel = channel
         registrar.addMethodCallDelegate(instance, channel: channel)
 
          DispatchQueue.main.async {
@@ -463,7 +465,7 @@ extension FlutterPluginIcNfcPlugin: ICMainNFCReaderDelegate {
      * - NoResponse: No response from card
      */
     public func icNFCCardReader(_ state: ICNFCReaderState, progress: Int, error: String) {
-        print("NFC State: \(state), Progress: \(progress)%, Error: \(error) - end log NFC State")
+        debugPrint("NFC State: \(state), Progress: \(progress)%, Error: \(error) - end log NFC State")
         if state == ICNFCDidError {
             pendingResult?(FlutterError(code: "IC_NFC_HAS_ERROR",
                                         message: error,
@@ -473,6 +475,7 @@ extension FlutterPluginIcNfcPlugin: ICMainNFCReaderDelegate {
     }
     
     public func icNFCPopupReaderChipDisappear() {
-        print("NFC popup disappeared")
+        debugPrint("NFC popup disappeared - chip left reading area")
+        channel?.invokeMethod("onChipDisappear", arguments: nil)
     }
 }

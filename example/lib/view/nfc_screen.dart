@@ -249,6 +249,7 @@ class _NfcScreenState extends State<NfcScreen> {
   Future<void> _nfcWithoutUi() async {
     try {
       if (!_validateInputs()) return;
+
       final config = NfcPresets.manualWithoutUi(
         idNumber: _idCtrl.text.trim(),
         birthday: _dobCtrl.text.trim(),
@@ -262,8 +263,14 @@ class _NfcScreenState extends State<NfcScreen> {
         baseUrl: _baseUrl,
         languageSdk: _language,
         numberTimesRetryScanNFC: _numberTimesRetryScanNFC,
+        loadingColor: "#ffffff",
       );
-      _navigate(await ICNfc.instance.onlyNfcWithoutUi(config));
+
+      final result = await ICNfc.instance.onlyNfcWithoutUi(
+        context,
+        config,
+      );
+       _navigate(result);
     } on PlatformException catch (e) {
       final error = ICNFCError.fromString(e.message ?? '');
       _showError("${e.code} - ${error.description}");

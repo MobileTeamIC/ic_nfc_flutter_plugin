@@ -58,4 +58,7 @@ object KeyArgumentMethodChannel {
     const val TRANSACTION_PARTNER_ID_RECENT_LOCATION: String = "transaction_partner_id_recent_location"
     const val TRANSACTION_PARTNER_ID_ORIGINAL_LOCATION: String = "transaction_partner_id_original_location"
     const val NAME_SSL_PINNING: String = "name_ssl_pinning"
+
+    // Các thuộc tính UI
+    const val LOADING_COLOR: String = "loading_color"
 }

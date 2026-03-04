@@ -65,6 +65,9 @@ class ICNfcConfig {
   final String? transactionPartnerIDOriginalLocation;
   final String? nameSSLPinning;
 
+  // Config ui
+  final String? loadingColor;
+
   const ICNfcConfig({
     this.accessToken,
     this.tokenId,
@@ -116,6 +119,7 @@ class ICNfcConfig {
     this.transactionPartnerIDOriginalLocation,
     this.nameSSLPinning,
     this.modeButtonHeaderBar,
+    this.loadingColor
   });
 
   /// Convert to Map for method channel. Only non-null fields included.
@@ -276,6 +280,9 @@ class ICNfcConfig {
     if (modeButtonHeaderBar != null) {
       map['mode_button_header_bar'] = modeButtonHeaderBar!.name;
     }
+    if (loadingColor != null) {
+      map['loading_color'] = loadingColor;
+    }
     return map;
   }
 
@@ -338,6 +345,7 @@ class ICNfcConfig {
     String? transactionPartnerIDRecentLocation,
     String? transactionPartnerIDOriginalLocation,
     String? nameSSLPinning,
+    String? loadingColor,
   }) {
     return ICNfcConfig(
       accessToken: accessToken ?? this.accessToken,
@@ -389,6 +397,7 @@ class ICNfcConfig {
       transactionPartnerIDRecentLocation: transactionPartnerIDRecentLocation ?? this.transactionPartnerIDRecentLocation,
       transactionPartnerIDOriginalLocation: transactionPartnerIDOriginalLocation ?? this.transactionPartnerIDOriginalLocation,
       nameSSLPinning: nameSSLPinning ?? this.nameSSLPinning,
+      loadingColor: loadingColor ?? this.loadingColor,
     );
   }
 

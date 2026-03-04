@@ -378,6 +378,9 @@ class NfcPresets {
     // Upload mode
     NfcModeUploadFile modeUploadFile = NfcModeUploadFile.icnfcDefault,
     NfcFlow flowNFC = NfcFlow.icnfcNtb,
+
+    // Config UI
+    String? loadingColor,
   }) => ICNfcConfig(
     idNumber: idNumber,
     birthday: birthday,
@@ -416,5 +419,6 @@ class NfcPresets {
     headersRequest: headersRequest,
     modeUploadFile: modeUploadFile,
     flowNFC: flowNFC,
+    loadingColor: loadingColor,
   );
 }

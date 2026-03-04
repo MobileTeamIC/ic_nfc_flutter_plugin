@@ -106,7 +106,8 @@ enum ICNFCErrorType {
   cancelled,
   hasError,
   invalidArgumentsPlugin,
-  jsonErrorPlugin;
+  jsonErrorPlugin,
+  chipDisappear;
 
   String get value {
     switch (this) {
@@ -118,6 +119,8 @@ enum ICNFCErrorType {
         return 'IC_NFC_INVALID_ARGUMENTS';
       case ICNFCErrorType.jsonErrorPlugin:
         return 'IC_NFC_JSON_ERROR';
+      case ICNFCErrorType.chipDisappear:
+        return 'IC_NFC_CHIP_DISAPPEAR';
     }
   }
 }
