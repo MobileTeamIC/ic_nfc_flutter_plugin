@@ -86,3 +86,8 @@ và project này tuân theo [Semantic Versioning](https://semver.org/spec/v2.0.0
     }
   ```
   
+
+## [1.0.4] - 2026-03-13
+
+### Update
+  - Fix bug android: đọc thẻ cccd mới bị lỗi
