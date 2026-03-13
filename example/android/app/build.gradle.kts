@@ -50,7 +50,7 @@ android {
     }
 }
 dependencies {
-    implementation(files("libs/vnpt_nfc_sdk-release-v1.8.3.aar"))
+    implementation(files("libs/vnpt_nfc_sdk-release-v1.8.4.aar"))
     implementation(files("libs/scanqr_ic_sdk-release-v1.0.6.aar"))
 }
 

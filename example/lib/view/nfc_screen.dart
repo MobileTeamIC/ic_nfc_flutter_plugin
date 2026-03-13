@@ -143,12 +143,7 @@ class _NfcScreenState extends State<NfcScreen> {
         languageSdk: _language,
         modeButtonHeaderBar: _modeButtonHeaderBar,
         isShowLogo: _isShowLogo,
-        readingTagsNFC: [
-          CardReaderValues.verifyDocumentInfo.channelValue,
-          CardReaderValues.mrzInfo.channelValue,
-          CardReaderValues.imageAvatarInfo.channelValue,
-          CardReaderValues.securityDataInfo.channelValue,
-        ],
+        isEnablePostcodeMatching: true,
       );
       _navigate(await ICNfc.instance.qrToNfc(config));
     } on PlatformException catch (e) {
@@ -170,6 +165,8 @@ class _NfcScreenState extends State<NfcScreen> {
         languageSdk: _language,
         modeButtonHeaderBar: _modeButtonHeaderBar,
         isShowLogo: _isShowLogo,
+                isEnablePostcodeMatching: true,
+
       );
       _navigate(await ICNfc.instance.mrzToNfc(config));
     } on PlatformException catch (e) {
@@ -263,7 +260,8 @@ class _NfcScreenState extends State<NfcScreen> {
         baseUrl: _baseUrl,
         languageSdk: _language,
         numberTimesRetryScanNFC: _numberTimesRetryScanNFC,
-        loadingColor: "#ffffff",
+        isEnablePostcodeMatching: true,
+        loadingColor: "#FF5722",
       );
 
       final result = await ICNfc.instance.onlyNfcWithoutUi(

@@ -63,7 +63,7 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
              */
             intent.putExtra(
                 KeyIntentConstantsNFC.READER_CARD_MODE,
-                SDKEnumNFC.ReaderCardMode.NONE.getValue()
+                SDKEnumNFC.ReaderCardMode.NONE.value
             )
             return intent
         }
@@ -139,13 +139,19 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
              *    - true: bật tính năng
              *    - false: tắt tính năng
              */
-            it.putExtra(KeyIntentConstantsNFC.IS_ENABLE_UPLOAD_IMAGE, true)
+            it.putExtra(
+                KeyIntentConstantsNFC.IS_ENABLE_UPLOAD_IMAGE,
+                json.optBoolean(KeyArgumentMethodChannel.IS_ENABLE_UPLOAD_IMAGE, true)
+            )
             /**
              * bật tính năng get Postcode
              *    - true: bật tính năng
              *    - false: tắt tính năng
              */
-            it.putExtra(KeyIntentConstantsNFC.IS_ENABLE_POSTCODE_MATCHING, true)
+            it.putExtra(
+                KeyIntentConstantsNFC.IS_ENABLE_POSTCODE_MATCHING,
+                json.optBoolean(KeyArgumentMethodChannel.IS_ENABLE_POSTCODE_MATCHING, false)
+            )
             /**
              * truyền các giá trị đọc thẻ
              *    - nếu không truyền gì mặc định sẽ đọc tất cả (MRZ,Verify Document,Image Avatar)
@@ -154,14 +160,21 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
              * eg: chỉ đọc thông tin MRZ
              *    intArrayOf(SDKEnumNFC.ReadingNFCTags.MRZInfo.value)
              */
-            it.putExtra(
-                KeyIntentConstantsNFC.READING_TAGS_NFC,
-                intArrayOf(
-                    SDKEnumNFC.ReadingNFCTags.MRZInfo.value,
-                    SDKEnumNFC.ReadingNFCTags.VerifyDocumentInfo.value,
-                    SDKEnumNFC.ReadingNFCTags.ImageAvatarInfo.value
+            val readingTagsArray = json.optJSONArray(KeyArgumentMethodChannel.READING_TAGS_NFC)
+            if (readingTagsArray != null && readingTagsArray.length() > 0) {
+                val readingTags = IntArray(readingTagsArray.length()) { i -> readingTagsArray.optInt(i) }
+                it.putExtra(KeyIntentConstantsNFC.READING_TAGS_NFC, readingTags)
+            } else {
+                it.putExtra(
+                    KeyIntentConstantsNFC.READING_TAGS_NFC,
+                    intArrayOf(
+                        SDKEnumNFC.ReadingNFCTags.MRZInfo.value,
+                        SDKEnumNFC.ReadingNFCTags.VerifyDocumentInfo.value,
+                        SDKEnumNFC.ReadingNFCTags.ImageAvatarInfo.value,
+                        SDKEnumNFC.ReadingNFCTags.AuthenticationInfo.value,
+                    )
                 )
-            )
+            }
 
             /**
              * set baseDomain="" => sử dụng mặc định là Product của VNPT
@@ -593,7 +606,7 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
         val intent = ctx.getBaseIntent(VnptScanNFCActivity::class.java, json)
         intent.putExtra(
             KeyIntentConstantsNFC.READER_CARD_MODE,
-            SDKEnumNFC.ReaderCardMode.QRCODE.getValue()
+            SDKEnumNFC.ReaderCardMode.QRCODE.value
         )
 
         return intent
@@ -601,12 +614,10 @@ class FlutterPluginIcNfcPlugin : FlutterPlugin, ActivityAware, MethodCallHandler
 
     // Thực hiện quét mã MRZ và đọc thông tin thẻ Căn cước NFC
     private fun navigateTo_MRZ_NFC(ctx: Context, json: JSONObject): Intent {
-
-
         val intent = ctx.getBaseIntent(VnptScanNFCActivity::class.java, json)
         intent.putExtra(
             KeyIntentConstantsNFC.READER_CARD_MODE,
-            SDKEnumNFC.ReaderCardMode.MRZ_CODE.getValue()
+            SDKEnumNFC.ReaderCardMode.MRZ_CODE.value
         )
 
         return intent
