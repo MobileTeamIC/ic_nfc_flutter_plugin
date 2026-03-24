@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_plugin_ic_nfc_example/view/ekyc_screen.dart';
 import 'package:flutter_plugin_ic_nfc_example/view/nfc_screen.dart';
 import 'package:flutter_plugin_ic_nfc_example/view/setting_screen.dart';
 

@@ -10,6 +10,8 @@
         android:required="false" />
 
     <application>
-        <activity android:name=".NfcTransparentActivity" android:theme="@style/AppTheme.Transparent" />
+        <activity android:name=".NfcTransparentActivity" 
+                  android:theme="@style/AppTheme.Transparent"
+            android:launchMode="singleTop"/>
     </application>
 </manifest>

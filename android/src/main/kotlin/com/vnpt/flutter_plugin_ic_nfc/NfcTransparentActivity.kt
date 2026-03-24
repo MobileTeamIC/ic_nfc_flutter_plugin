@@ -13,6 +13,7 @@ import com.vnptit.nfc.nfc_tool.NfcOptionNoGuide
 import com.vnptit.nfc.nfc_tool.NfcResult
 import com.vnptit.nfc.nfc_tool.NfcTool
 import org.json.JSONObject
+import java.util.concurrent.atomic.AtomicBoolean
 
 class NfcTransparentActivity : AppCompatActivity() {
 
@@ -22,13 +23,14 @@ class NfcTransparentActivity : AppCompatActivity() {
        private const val NFC_REQUEST_CODE = 11021
        const val NFC_RESULT = "nfc_result"
        const val NFC_ERROR = "nfc_error"
-       const val NFC_CODE = "CANCELLED"
+       const val NFC_CODE = "IC_NFC_CANCELLED"
        const val EKYC_REQUEST_CODE = 11022
        const val NFC_NO_GUIDE_REQUEST_CODE = 11023
        const val ERROR_NFC_CODE = "69"
    }
 
-   private var nfcTool: NfcTool? = null
+    private var nfcTool: NfcTool? = null
+    private val isNFCFinished = AtomicBoolean(false)
 
    override fun onCreate(savedInstanceState: Bundle?) {
       super.onCreate(savedInstanceState)
@@ -46,6 +48,7 @@ class NfcTransparentActivity : AppCompatActivity() {
          NfcOptionNoGuide().setExtras(FlutterPluginIcNfcPlugin.navigateToOnlyNFC(this, jsonObject)),
          object : NfcCallback() {
              override fun onSuccess(result: NfcResult?) {
+                 isNFCFinished.set(true)
                  val intent = Intent()
                  val gson = Gson()
 
@@ -61,6 +64,7 @@ class NfcTransparentActivity : AppCompatActivity() {
              }
 
              override fun onError(message: NfcError?) {
+                 isNFCFinished.set(true)
                  val intent = Intent()
                  val errorCode = "IC_NFC_HAS_ERROR"
                  val errorMessage = message?.name ?: ""
@@ -73,6 +77,23 @@ class NfcTransparentActivity : AppCompatActivity() {
          }
       )
    }
+
+    private fun dismiss() {
+        val intent = Intent()
+        val errorCode = "IC_NFC_CANCELLED"
+        val errorMessage = "NFC operation cancelled by system (app backgrounded)"
+        intent.putExtra(NFC_ERROR, errorCode)
+        intent.putExtra(NFC_CODE, errorMessage)
+        setResult(RESULT_CANCELED, intent)
+        finish()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (!isNFCFinished.get()) {
+            dismiss()
+        }
+    }
 
    override fun onDestroy() {
       super.onDestroy()

@@ -37,6 +37,7 @@ class _NfcScreenState extends State<NfcScreen> {
   ModeButtonHeaderBar _modeButtonHeaderBar = ModeButtonHeaderBar.leftButton;
   bool _isShowLogo = false;
   int _numberTimesRetryScanNFC = 3;
+  bool _isBusy = false;
 
   @override
   void initState() {
@@ -131,6 +132,8 @@ class _NfcScreenState extends State<NfcScreen> {
 
   // MARK: - NFC Flows
   Future<void> _qrToNfc() async {
+    if (_isBusy) return;
+    _isBusy = true;
     try {
       final config = NfcPresets.qrToNfc(
         accessToken: _accessToken,
@@ -149,10 +152,14 @@ class _NfcScreenState extends State<NfcScreen> {
     } on PlatformException catch (e) {
       final error = ICNFCError.fromString(e.message ?? '');
       _showError("${e.code} - ${error.description}");
+    } finally {
+      if (mounted) setState(() => _isBusy = false);
     }
   }
 
   Future<void> _mrzToNfc() async {
+    if (_isBusy) return;
+    _isBusy = true;
     try {
       final config = NfcPresets.mrzToNfc(
         accessToken: _accessToken,
@@ -180,10 +187,14 @@ class _NfcScreenState extends State<NfcScreen> {
       } else if (e.code == ICNFCErrorType.jsonErrorPlugin.value) {
         _showError("JSON error ${e.message}");
       }
+    } finally {
+      if (mounted) setState(() => _isBusy = false);
     }
   }
 
   Future<void> _nfcWithUi() async {
+    if (_isBusy) return Future.value({});
+    _isBusy = true;
     try {
       // show dialog to input id, dob, exp
       if (!_validateInputs()) return Future.value({});
@@ -206,10 +217,13 @@ class _NfcScreenState extends State<NfcScreen> {
     } on PlatformException catch (e) {
       final error = ICNFCError.fromString(e.message ?? '');
       _showError("${e.code} - ${error.description}");
+    } finally {
+      if (mounted) setState(() => _isBusy = false);
     }
   }
 
   Future<void> _showInputDOBAndExpiredDateDialog({bool isWithUI = true}) async {
+    if (_isBusy) return;
     showDialog(
       context: context,
       builder: (context) {
@@ -218,6 +232,9 @@ class _NfcScreenState extends State<NfcScreen> {
           dobCtrl: _dobCtrl,
           expCtrl: _expCtrl,
           onConfirm: () {
+            if (_isBusy) return;
+            Navigator.pop(context); // Dismiss dialog immediately
+
             SharedPreferenceService.instance.setString(
               SharedPreferenceKeys.idNumber,
               _idCtrl.text.trim(),
@@ -244,6 +261,8 @@ class _NfcScreenState extends State<NfcScreen> {
   }
 
   Future<void> _nfcWithoutUi() async {
+    if (_isBusy) return;
+    _isBusy = true;
     try {
       if (!_validateInputs()) return;
 
@@ -272,6 +291,8 @@ class _NfcScreenState extends State<NfcScreen> {
     } on PlatformException catch (e) {
       final error = ICNFCError.fromString(e.message ?? '');
       _showError("${e.code} - ${error.description}");
+    } finally {
+      if (mounted) setState(() => _isBusy = false);
     }
   }
 

@@ -61,7 +61,7 @@ android {
     }
 
     dependencies {
-        compileOnly files('libs/vnpt_nfc_sdk-release-v1.8.4.aar')
+        compileOnly files('libs/vnpt_nfc_sdk-release-v1.8.5.aar')
         compileOnly files('libs/scanqr_ic_sdk-release-v1.0.6.aar')
         implementation 'androidx.core:core-ktx:1.8.0'
         implementation 'androidx.appcompat:appcompat:1.6.1'

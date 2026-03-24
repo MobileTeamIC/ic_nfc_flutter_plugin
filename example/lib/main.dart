@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_plugin_ic_nfc_example/theme/app_theme.dart';
-import 'package:flutter_plugin_ic_nfc_example/view/home_screen.dart';
 import 'package:flutter_plugin_ic_nfc_example/view/nfc_screen.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
