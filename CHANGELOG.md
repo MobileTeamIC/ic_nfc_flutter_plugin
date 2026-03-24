@@ -91,3 +91,8 @@ và project này tuân theo [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Update
   - Fix bug android: đọc thẻ cccd mới bị lỗi
+
+## [1.0.5] - 2026-03-24
+
+### Update
+  - Fix bug android: crash khi app bị pause
