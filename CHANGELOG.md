@@ -102,3 +102,22 @@ và project này tuân theo [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Update
   - Update cryptographic dependencies for security improvements
   
+  - build.gradle(.kts) module app
+  ```gradle
+  android {
+      ...
+
+      packaging {
+          resources.excludes += '/META-INF/versions/9/OSGI-INF/MANIFEST.MF'
+      }
+  }
+  ```
+  - gradle.properties module app
+  ```
+  android.jetifier.ignorelist=bcprov-jdk18on
+  ```
+
+## [1.0.7] - 2026-04-01
+
+### Update
+  - Downgrade version bouncycastle to 1.78
