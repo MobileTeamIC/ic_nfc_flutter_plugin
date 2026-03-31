@@ -48,9 +48,12 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+    packaging {
+        resources.excludes += "/META-INF/versions/9/OSGI-INF/MANIFEST.MF"
+    }
 }
 dependencies {
-    implementation(files("libs/vnpt_nfc_sdk-release-v1.8.5.aar"))
+    implementation(files("libs/vnpt_nfc_sdk-release-v1.8.6.aar"))
     implementation(files("libs/scanqr_ic_sdk-release-v1.0.6.aar"))
 }
 

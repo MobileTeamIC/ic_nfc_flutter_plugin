@@ -96,3 +96,10 @@ và project này tuân theo [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Update
   - Fix bug android: crash khi app bị pause
+
+## [1.0.6] - 2026-03-30
+
+### Update
+  - Update SDK android version to 1.8.6
+  - Vá lỗi bảo mật
+  
