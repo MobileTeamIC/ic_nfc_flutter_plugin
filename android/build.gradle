@@ -18,14 +18,16 @@ buildscript {
 allprojects {
     repositories {
         google()
-        mavenLocal()
         mavenCentral()
-        // maven { url "${rootProject.projectDir}/libs-maven-local" }
     }
 }
 
 apply plugin: "com.android.library"
 apply plugin: "kotlin-android"
+
+repositories {
+    maven { url "${projectDir}/local-maven" }
+}
 
 android {
     namespace = "com.vnpt.flutter_plugin_ic_nfc"
@@ -65,8 +67,8 @@ android {
     }
 
     dependencies {
-        compileOnly files('libs/vnpt_nfc_sdk-release-v1.8.6.aar')
-        compileOnly files('libs/scanqr_ic_sdk-release-v1.0.6.aar')
+        implementation 'com.vnpt:vnpt-nfc-sdk:1.8.6'
+        implementation 'com.vnpt:scanqr-ic-sdk:1.0.6'
         implementation 'androidx.core:core-ktx:1.8.0'
         implementation 'androidx.appcompat:appcompat:1.6.1'
         implementation 'com.google.android.material:material:1.5.0'
