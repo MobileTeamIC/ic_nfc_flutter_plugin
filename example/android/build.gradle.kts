@@ -3,6 +3,8 @@ allprojects {
         google()
         mavenCentral()
         mavenLocal()
+        // VNPT SDKs are published to the plugin's local Maven repository
+        maven { url = uri("${rootDir}/../../android/local-maven") }
     }
 }
 

@@ -53,8 +53,8 @@ android {
     }
 }
 dependencies {
-    implementation(files("libs/vnpt_nfc_sdk-release-v1.8.6.aar"))
-    implementation(files("libs/scanqr_ic_sdk-release-v1.0.6.aar"))
+    implementation("com.vnpt:vnpt-nfc-sdk:1.8.6")
+    implementation("com.vnpt:scanqr-ic-sdk:1.0.6")
 }
 
 flutter {
