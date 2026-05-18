@@ -1,10 +1,12 @@
 package com.vnpt.flutter_plugin_ic_nfc
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.play.core.splitcompat.SplitCompat
 import androidx.core.view.WindowCompat
 import com.google.gson.Gson
 import com.vnptit.nfc.nfc_tool.NfcCallback
@@ -31,6 +33,11 @@ class NfcTransparentActivity : AppCompatActivity() {
 
     private var nfcTool: NfcTool? = null
     private val isNFCFinished = AtomicBoolean(false)
+
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(base)
+        SplitCompat.installActivity(this)
+    }
 
    override fun onCreate(savedInstanceState: Bundle?) {
       super.onCreate(savedInstanceState)

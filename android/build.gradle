@@ -67,6 +67,10 @@ android {
     }
 
     dependencies {
+        // SplitCompat is provided by the base app (com.google.android.play:core:1.10.3);
+        // compileOnly so the class is visible here without bundling Play Core in the plugin AAR.
+        compileOnly 'com.google.android.play:core:1.10.3'
+
         // Moved to ekyc_feature DFM — only needed when eKYC/NFC flow is active
         compileOnly 'com.vnpt:vnpt-nfc-sdk:1.8.6'
         compileOnly 'com.vnpt:scanqr-ic-sdk:1.0.6'
