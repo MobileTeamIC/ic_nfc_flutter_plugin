@@ -1,6 +1,8 @@
 # This is a generated file; do not edit or check into version control.
+app_settings=/Users/devj666/.pub-cache/hosted/pub.dev/app_settings-7.0.0/
 flutter_plugin_ic_nfc=/Users/devj666/Documents/WorkPlace/VNPT/Flutter-Plugin/github-flutter-plugin/nfc_flutter_plugin/
-integration_test=/Users/devj666/fvm/versions/3.29.2/packages/integration_test/
+integration_test=/Users/devj666/fvm/versions/3.29.3/packages/integration_test/
+nfc_manager=/Users/devj666/.pub-cache/hosted/pub.dev/nfc_manager-4.0.2/
 path_provider=/Users/devj666/.pub-cache/hosted/pub.dev/path_provider-2.1.5/
 path_provider_android=/Users/devj666/.pub-cache/hosted/pub.dev/path_provider_android-2.2.19/
 path_provider_foundation=/Users/devj666/.pub-cache/hosted/pub.dev/path_provider_foundation-2.4.2/

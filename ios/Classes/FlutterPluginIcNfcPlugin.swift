@@ -245,6 +245,7 @@ public class FlutterPluginIcNfcPlugin: NSObject, FlutterPlugin {
     
     // MARK: - Reader Configuration Helpers
     
+    @available(iOS 13.0, *)
     private func configureAuthentication(for reader: ICMainNFCReaderViewController, with args: [String: Any]) {
         reader.tokenId = args[KeyArgumentMethodChannel.tokenId] as? String ?? ""
         reader.tokenKey = args[KeyArgumentMethodChannel.tokenKey] as? String ?? ""
@@ -255,6 +256,7 @@ public class FlutterPluginIcNfcPlugin: NSObject, FlutterPlugin {
         reader.baseUrl = args[KeyArgumentMethodChannel.baseUrl] as? String ?? ""
     }
     
+    @available(iOS 13.0, *)
     private func configureNFCCommonOptions(for reader: ICMainNFCReaderViewController,
                                            args: [String: Any]) {
         reader.languageSdk = args[KeyArgumentMethodChannel.languageSdk] as? String ?? "icnfc_vi"
@@ -311,6 +313,7 @@ public class FlutterPluginIcNfcPlugin: NSObject, FlutterPlugin {
         reader.nameSSLPinning = args[KeyArgumentMethodChannel.nameSSLPinning] as? String ?? ""
     }
     
+    @available(iOS 13.0, *)
     private func configureUIOptions(for reader: ICMainNFCReaderViewController, args: [String: Any]) {
         reader.isShowTutorial = args[KeyArgumentMethodChannel.isShowTutorial] as? Bool ?? false
         reader.transactionPartnerIDUploadNFC = args[KeyArgumentMethodChannel.transactionPartnerIDUploadNFC] as? String ?? ""

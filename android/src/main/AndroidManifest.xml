@@ -12,6 +12,8 @@
     <application>
         <activity android:name=".NfcTransparentActivity" 
                   android:theme="@style/AppTheme.Transparent"
-            android:launchMode="singleTop"/>
+                  android:launchMode="singleTop"
+                  android:noHistory="true"
+                  android:excludeFromRecents="true"/>
     </application>
 </manifest>

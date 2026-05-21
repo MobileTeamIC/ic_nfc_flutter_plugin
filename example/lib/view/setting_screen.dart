@@ -380,31 +380,36 @@ class _SettingScreenState extends State<SettingScreen> {
     if (isTextArea) {
       return ShadTextareaFormField(
         id: id,
-        label: Text(title),
+        label: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(title),
+            Row(
+              spacing: 8,
+              children: [
+                ShadIconButton(
+                  backgroundColor: context.colorScheme.cardForeground,
+                  width: 32,
+                  height: 32,
+                  onPressed: () => _handlePaste(context, controller),
+                  icon: const Icon(LucideIcons.clipboardPaste),
+                ),
+                ShadIconButton(
+                  backgroundColor: context.colorScheme.cardForeground,
+                  width: 32,
+                  height: 32,
+                  onPressed: () => _handleCopy(controller.text),
+                  icon: const Icon(LucideIcons.copy),
+                ),
+              ],
+            ),
+          ],
+        ),
         resizable: true,
         maxHeight: 400,
         minHeight: 100,
         placeholder: Text(placeholder),
         controller: controller,
-        trailing: Row(
-          spacing: 8,
-          children: [
-            ShadIconButton(
-              backgroundColor: context.colorScheme.cardForeground,
-              width: 32,
-              height: 32,
-              onPressed: () => _handlePaste(context, controller),
-              icon: const Icon(LucideIcons.clipboardPaste),
-            ),
-            ShadIconButton(
-              backgroundColor: context.colorScheme.cardForeground,
-              width: 32,
-              height: 32,
-              onPressed: () => _handleCopy(controller.text),
-              icon: const Icon(LucideIcons.copy),
-            ),
-          ],
-        ),
       );
     } else {
       return ShadInputFormField(

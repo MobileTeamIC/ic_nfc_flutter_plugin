@@ -121,3 +121,9 @@ và project này tuân theo [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Update
   - Downgrade version bouncycastle to 1.78
+
+## [1.0.8] - 2026-05-21
+
+### Update
+  - Lower iOS deployment target to 12.0
+  - Set Flutter SDK version to 3.29.3
