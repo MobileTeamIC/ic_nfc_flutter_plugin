@@ -36,11 +36,11 @@ allprojects {
         google()
         mavenCentral()
         mavenLocal()
-        maven { url = uri("${rootDir}/../../android/libs-maven-local") }
+        maven { url = uri("${rootDir}/../../android/local-maven") }
     }
 }
 ```
-Trỏ tới đường dẫn `android/libs-maven-local` của plugin `flutter_plugin_ic_nfc`
+Trỏ tới đường dẫn `android/local-maven` của plugin `flutter_plugin_ic_nfc`
 
 ### iOS
 Thêm dòng sau vào `Info.plist`

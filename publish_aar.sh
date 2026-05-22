@@ -6,12 +6,12 @@ set -euo pipefail
 cd "$(dirname "$0")"
 PLUGIN_DIR=$(pwd)
 LIBS_DIR="$PLUGIN_DIR/android/libs"
-MAVEN_LOCAL="$PLUGIN_DIR/android/libs-maven-local"
+MAVEN_LOCAL="$PLUGIN_DIR/android/local-maven"
 
 # groupId|artifactId|version|aarFileName
 DEPENDENCIES=(
-  "com.vnpt.flutter_plugin_ic_nfc|vnpt-nfc-sdk|1.8.0|vnpt_nfc_sdk-release-v1.8.2.aar"
-  "com.vnpt.flutter_plugin_ic_nfc|scanqr-ic-sdk|1.0.6|scanqr_ic_sdk-release-v1.0.6.aar"
+  "com.vnpt|vnpt-nfc-sdk|1.8.6|vnpt_nfc_sdk-release-v1.8.6.aar"
+  "com.vnpt|scanqr-ic-sdk|1.0.6|scanqr_ic_sdk-release-v1.0.6.aar"
 )
 
 # Verify libs directory exists
