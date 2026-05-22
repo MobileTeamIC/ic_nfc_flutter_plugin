@@ -127,3 +127,4 @@ và project này tuân theo [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Update
   * Lower iOS deployment target to 12.0
   * Set Flutter SDK version to 3.29.3
+  * Migrate VNPT SDK dependencies to local Maven repository
