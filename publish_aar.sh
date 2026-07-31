@@ -10,7 +10,7 @@ MAVEN_LOCAL="$PLUGIN_DIR/android/local-maven"
 
 # groupId|artifactId|version|aarFileName
 DEPENDENCIES=(
-  "com.vnpt|vnpt-nfc-sdk|1.8.6|vnpt_nfc_sdk-release-v1.8.6.aar"
+  "com.vnpt|vnpt-nfc-sdk|1.8.7|vnpt_nfc_sdk-release-v1.8.7.aar"
   "com.vnpt|scanqr-ic-sdk|1.0.6|scanqr_ic_sdk-release-v1.0.6.aar"
 )
 

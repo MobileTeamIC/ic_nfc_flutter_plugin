@@ -37,6 +37,15 @@ Hướng dẫn chi tiết về release và versioning:
 
 **Đọc khi:** Bạn cần đóng gói và release plugin.
 
+### [UPGRADE_SDK_GUIDE.md](UPGRADE_SDK_GUIDE.md)
+Hướng dẫn nâng cấp VNPT NFC SDK và cấu hình Maven Local:
+- Quy trình cập nhật file AAR
+- Cấu hình file `publish_aar.sh` và `build.gradle`
+- Cách build và làm sạch cache repository local
+- Xác minh phiên bản SDK được resolve
+
+**Đọc khi:** Bạn cần nâng cấp phiên bản Native SDK VNPT NFC.
+
 ### [CHANGELOG.md](CHANGELOG.md)
 Lịch sử thay đổi của plugin:
 - Tất cả các version đã release
@@ -127,6 +136,7 @@ Script tự động hóa quy trình release:
 - **API Reference:** [README.md#api-reference](README.md#api-reference)
 - **Release:** [RELEASE_GUIDE.md](RELEASE_GUIDE.md)
 - **Update:** [UPDATE_GUIDE.md](UPDATE_GUIDE.md)
+- **Upgrade SDK & Maven Local:** [UPGRADE_SDK_GUIDE.md](UPGRADE_SDK_GUIDE.md)
 
 ## 📞 Hỗ trợ
 

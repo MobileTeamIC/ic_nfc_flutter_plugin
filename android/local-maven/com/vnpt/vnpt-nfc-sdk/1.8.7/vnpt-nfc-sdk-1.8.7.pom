@@ -5,6 +5,6 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.vnpt</groupId>
   <artifactId>vnpt-nfc-sdk</artifactId>
-  <version>1.8.6</version>
+  <version>1.8.7</version>
   <packaging>aar</packaging>
 </project>
