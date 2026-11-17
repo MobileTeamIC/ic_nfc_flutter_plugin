@@ -2,7 +2,7 @@ group = "com.vnpt.flutter_plugin_ic_nfc"
 version = "1.0-SNAPSHOT"
 
 buildscript {
-    ext.kotlin_version = "2.1.0"
+    ext.kotlin_version = "2.2.20"
     repositories {
         google()
         mavenLocal()
@@ -10,7 +10,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("com.android.tools.build:gradle:8.9.1")
+        classpath("com.android.tools.build:gradle:8.11.1")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
     }
 }
@@ -31,7 +31,7 @@ android {
     namespace = "com.vnpt.flutter_plugin_ic_nfc"
 
     compileSdk = 35
-    ndkVersion = "27.0.12077973"
+    ndkVersion = "28.2.13676358"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -61,7 +61,7 @@ android {
     }
 
     dependencies {
-        compileOnly files('libs/vnpt_nfc_sdk-release-v1.8.5.aar')
+        compileOnly files('libs/vnpt_nfc_sdk-release-v1.8.12.aar')
         compileOnly files('libs/scanqr_ic_sdk-release-v1.0.6.aar')
         implementation 'androidx.core:core-ktx:1.8.0'
         implementation 'androidx.appcompat:appcompat:1.6.1'

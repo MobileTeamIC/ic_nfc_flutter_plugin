@@ -3,3 +3,4 @@
 .fvm/
 .dart_tool/
 /plans
+.DS_Store

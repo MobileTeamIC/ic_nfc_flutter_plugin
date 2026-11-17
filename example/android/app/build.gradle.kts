@@ -8,7 +8,7 @@ plugins {
 android {
     namespace = "com.vnpt.flutter_plugin_ic_nfc_example"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = "27.0.12077973"
+    ndkVersion = "28.2.13676358"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -46,11 +46,16 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 }
 dependencies {
-    implementation(files("libs/vnpt_nfc_sdk-release-v1.8.5.aar"))
+    implementation(files("libs/vnpt_nfc_sdk-release-v1.8.12.aar"))
     implementation(files("libs/scanqr_ic_sdk-release-v1.0.6.aar"))
 }
 

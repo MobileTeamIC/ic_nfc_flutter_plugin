@@ -29,6 +29,10 @@ dependencies:
   shadcn_ui: ^0.40.6
   nfc_manager: ^4.1.1
   app_settings: ^7.0.0
+
+dependency_overrides:
+  lucide_icons_flutter: ^4.0.3
+
 dev_dependencies:
   integration_test:
     sdk: flutter

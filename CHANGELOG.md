@@ -11,7 +11,7 @@ và project này tuân theo [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Tính năng mới đang được phát triển
 
 ### Changed
-- Thay đổi đang được phát triển
+- Update SDK android version to 1.8.12
 
 ### Fixed
 - Bug fixes đang được phát triển
